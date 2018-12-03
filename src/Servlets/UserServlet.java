@@ -27,7 +27,7 @@ public class UserServlet extends HttpServlet {
         ArrayList<User> list=new ArrayList<>();
         try {
             Connection conn = DatabaseInit.getConnection();
-            String sql = "select * from car_rent.user order by user_phone;";
+            String sql = "select * from car.user order by user_phone;";
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(sql);
 

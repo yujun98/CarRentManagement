@@ -12,11 +12,11 @@ public class User {
     //用户状态：是否认证
     private int state;
     //用户余额
-    private int balance;
+    private float balance;
     //用户押金
-    private int deposit;
+    private float deposit;
     //用户积分
-    private int score;
+    private float score;
 
     public void setUser_phone(String user_phone) {
         this.user_phone = user_phone;
@@ -33,13 +33,13 @@ public class User {
     public void setState(int state) {
         this.state = state;
     }
-    public void setBalance(int balance) {
+    public void setBalance(float balance) {
         this.balance = balance;
     }
-    public void setDeposit(int deposit) {
+    public void setDeposit(float deposit) {
         this.deposit = deposit;
     }
-    public void setScore(int score) {
+    public void setScore(float score) {
         this.score = score;
     }
 
@@ -58,13 +58,13 @@ public class User {
     public int getState() {
         return state;
     }
-    public int getBalance() {
+    public float getBalance() {
         return balance;
     }
-    public int getDeposit() {
+    public float getDeposit() {
         return deposit;
     }
-    public int getScore() {
+    public float getScore() {
         return score;
     }
 }

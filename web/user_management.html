@@ -12,6 +12,7 @@
     <script src="assets/bootstrap-table/bootstrap-table.min.js"></script>
     <script src="assets/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
     <script src="assets/bootstrap-table/extensions/editable/bootstrap-table-editable.min.js"></script>
+    <script src="assets/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
     <script>
         $(document).ready(function(){
             $('.managementDiv').hide();
@@ -232,7 +233,7 @@
                     editable: {
                         title: '输入用户手机号',
                         type: 'text',
-                        validate: function (v) {
+                        validate: function(v) {
                             if (!v) {
                                 return '用户手机号不能为空';
                             }
@@ -249,15 +250,15 @@
                     }
                 }, {
                     field: 'user_name',
-                    title: '用户姓名',
+                    title: '用户昵称',
                     type: 'text',
                     disabled: false,
                     editable: {
-                        title: '输入用户姓名',
+                        title: '输入用户昵称',
                         type: 'text',
-                        validate: function (v) {
+                        validate: function(v) {
                             if (!v) {
-                                return '用户姓名不能为空';
+                                return '用户昵称不能为空';
                             }
                         }
                     }
@@ -268,7 +269,7 @@
                     editable: {
                         title: '输入用户身份证号码',
                         type: 'text',
-                        validate: function (v) {
+                        validate: function(v) {
                             if (v.length !== 18) {
                                 return '用户身份证号码需满18位';
                             }
@@ -280,7 +281,7 @@
                     editable: {
                         title: '输入用户密码',
                         type: 'text',
-                        validate: function (v) {
+                        validate: function(v) {
                             if (!v) {
                                 return '用户密码不能为空';
                             }
@@ -295,7 +296,7 @@
                     editable: {
                         title: '输入用户押金',
                         type: 'text',
-                        validate: function (v) {
+                        validate: function(v) {
                             if (isNaN(v)) {
                                 return '用户押金必须是数字';
                             }
@@ -310,7 +311,7 @@
                     editable: {
                         title: '输入用户余额',
                         type: 'text',
-                        validate: function (v) {
+                        validate: function(v) {
                             if (isNaN(v)) {
                                 return '用户余额必须是数字';
                             }
@@ -325,7 +326,7 @@
                     editable: {
                         title: '输入用户积分',
                         type: 'text',
-                        validate: function (v) {
+                        validate: function(v) {
                             if (isNaN(v)) {
                                 return '用户积分必须是数字';
                             }
@@ -345,7 +346,35 @@
                             text: '已认证'
                         }]
                     }
-                }]
+                }],
+                onEditableSave: function(field, row) {
+                    console.log(row);
+                    var data = {
+                        "user_phone": row.user_phone,
+                        "user_name": row.user_name,
+                        "user_pwd": row.user_pwd,
+                        "id": row.id,
+                        "state": row.state,
+                        "balance": row.balance,
+                        "deposit": row.deposit,
+                        "score": row.score
+                    };
+                    $.ajax({
+                        type: "post",
+                        url: "updateUserServlet",
+                        data: data,
+                        dataType: "json",
+                        async: false,
+                        success: function(json) {
+                            if(parseInt(json.code) === 1) {
+                                alert("更改失败！");
+                            }
+                            else {
+                                alert("更改成功！");
+                            }
+                        }
+                    });
+                }
             });
         }
     </script>
@@ -378,21 +407,15 @@
         </div>
     </nav>
     <div class="page-wrapper">
-        <div align="center" class="managementDiv">
-            <div class="addManagement"></div>
-            <div class="searchManagement"></div>
+        <div class="container">
+            <div align="center" class="infoDiv"></div>
+            <div id="toolbar">
+                <!--如果这里是表单的话，设置文本框监听回车键再按下回车键时会导致页面刷新-->
+                <input type="text" id="search_text" class="form-control" placeholder="请输入用户手机号" style="float: left">
+                <input type="button" id="search_btn" class="btn btn-default" width="20%" style="position: fixed" value="搜索">
+            </div>
+            <table id="user_info" class="table table-bordered tab-content" data-toolbar="#toolbar"></table>
         </div>
-        <div class="buttonSet">
-            <input type="button" class="button" onclick="managementShow();$('.addManagement').show();$('.searchManagement').hide()" value="添加用户数据">
-            <input type="button" class="button" onclick="managementShow();$('.addManagement').hide();$('.searchManagement').show()" value="查找用户数据">
-        </div>
-        <div align="center" class="infoDiv"></div>
-        <div id="toolbar">
-            <!--如果这里是表单的话，设置文本框监听回车键再按下回车键时会导致页面刷新-->
-            <input type="text" class="form-control" id="search_text" placeholder="请输入用户手机号" style="float: left">
-            <input type="button" id="search_btn" class="btn btn-default" width="20%" style="position: fixed" value="搜索">
-        </div>
-        <table id="user_info" class="table table-bordered tab-content" data-toolbar="#toolbar"></table>
     </div>
 </body>
 </html>

@@ -28,7 +28,7 @@ public class SearchUserServlet extends HttpServlet {
         try {
             Connection conn = DatabaseInit.getConnection();
             String user_id = request.getParameter("user_phone");
-            String sql = "select * from car_rent.user where user_phone = ? order by user_phone;";
+            String sql = "select * from car.user where user_phone = ? order by user_phone;";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, user_id);
 

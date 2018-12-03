@@ -27,7 +27,7 @@ public class DeleteUserServlet extends HttpServlet {
             String user_phone = request.getParameter("user_phone");
 
             Connection conn = DatabaseInit.getConnection();
-            String sql = "delete from car_rent.user where user_phone = ?;";
+            String sql = "delete from car.user where user_phone = ?;";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, user_phone);
             ps.executeUpdate();
