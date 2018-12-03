@@ -4,14 +4,39 @@
     <meta charset="utf-8">
     <title>用户管理</title>
     <link rel="stylesheet" href="css/html.css">
-    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/bootstrap3-editable/css/bootstrap-editable.css">
+    <link rel="stylesheet" href="assets/bootstrap-table/bootstrap-table.css">
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/bootstrap-table/bootstrap-table.min.js"></script>
+    <script src="assets/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+    <script src="assets/bootstrap-table/extensions/editable/bootstrap-table-editable.min.js"></script>
     <script>
         $(document).ready(function(){
-            $("#user_management").addClass('selected');
             $('.managementDiv').hide();
-            showUserInfo();
-            initAddUserTable();
-            initSearchUserTable();
+            initTable();
+            $('#search_text').keydown(function (e) {
+                if (e.keyCode === 13) {
+                    $('#search_btn').click();
+                }
+            });
+            $('#search_btn').click(function () {
+                var user_phone = $("#search_text").val();
+                var data = {
+                    "user_phone": user_phone
+                };
+                $.ajax({
+                    type: "post",
+                    url: "searchUserServlet",
+                    data: data,
+                    dataType: "json",
+                    success: function(json){
+                        $('#user_info').bootstrapTable('load', json);
+                    }
+                });
+                document.getElementById("search_text").value = "";
+            })
         });
         function appendList(list, jsonObject) {
             list.append("<tr>");
@@ -26,33 +51,6 @@
             list.append("<td colspan='1'>" + "<input type='button' class='operation-button' onclick='deleteUser(this)' value='删除'>" + "</td>");
             list.append("<td colspan='1'>" + "<input type='button' class='operation-button' onclick='updateUser(this)' value='更改'>" + "</td>");
             list.append("</tr>");
-        }
-        function showUserInfo(){
-            var tableHeader = "<table align=\"center\" class=\"info\">" +
-                "<tr>" +
-                "<th>用户手机号</th>" +
-                "<th>用户昵称</th>" +
-                "<th>用户密码</th>" +
-                "<th>用户身份证号</th>" +
-                "<th>用户认证状态</th>" +
-                "<th>用户余额</th>" +
-                "<th>用户押金</th>" +
-                "<th>用户积分</th>" +
-                "<th colspan='2'>操作</th>" +
-                "</tr>";
-            $.ajax({
-                type: "post",
-                url: "userServlet",
-                dataType: "json",
-                success: function(json){
-                    var list = new StringBuffer();
-                    $.each(json, function (i, jsonObject) {
-                        appendList(list, jsonObject);
-                    });
-                    list.append("</table>");
-                    $(".infoDiv").html(tableHeader + list.toString());
-                }
-            });
         }
         function StringBuffer() {
             this.__strings__ = [];
@@ -78,11 +76,11 @@
                 "</tr>";
             var list = new StringBuffer();
             list.append("<tr>");
-            list.append("<td>" + "<input type='text' id='add_user_phone' class='add-input' placeholder='请输入用户手机号（必填）'>" + "</td>");
-            list.append("<td>" + "<input type='text' id='add_user_name' class='add-input' placeholder='请输入用户昵称（必填）'>" + "</td>");
-            list.append("<td>" + "<input type='text' id='add_user_pwd' class='add-input' placeholder='请输入用户密码（必填）'>" + "</td>");
+            list.append("<td>" + "<input type='text' id='add_user_phone' class='add-input' placeholder='请输入用户手机号'>" + "</td>");
+            list.append("<td>" + "<input type='text' id='add_user_name' class='add-input' placeholder='请输入用户昵称'>" + "</td>");
+            list.append("<td>" + "<input type='text' id='add_user_pwd' class='add-input' placeholder='请输入用户密码'>" + "</td>");
             list.append("<td>" + "<input type='text' id='add_id' class='add-input' placeholder='请输入用户身份证号码'>" + "</td>");
-            list.append("<td>" + "<select id='add_state'>" + "<option value='' selected>请选择用户认证状态</option>" + "<option value='0'>0（未认证）</option>" + "<option value='1'>1（已认证）</option>" + "</td>");
+            list.append("<td>" + "<input type='text' id='add_state' class='add-input' placeholder='请输入用户认证状态'>" + "</td>");
             list.append("<td>" + "<input type='text' id='add_balance' class='add-input' placeholder='请输入用户余额'>" + "</td>");
             list.append("<td>" + "<input type='text' id='add_deposit' class='add-input' placeholder='请输入用户押金'>" + "</td>");
             list.append("<td>" + "<input type='text' id='add_score' class='add-input' placeholder='请输入用户积分'>" + "</td>");
@@ -101,42 +99,31 @@
             var balance = $("#add_balance").val();
             var deposit = $("#add_deposit").val();
             var score = $("#add_score").val();
-            if (balance < 0) {
-                alert("余额不能小于0");
-            }
-            else if (deposit < 0) {
-                alert("押金不能小于0");
-            }
-            else if (score < 0) {
-                alert("积分不能小于0");
-            }
-            else {
-                var data = {
-                    "user_phone": user_phone,
-                    "user_name": user_name,
-                    "user_pwd": user_pwd,
-                    "id": id,
-                    "state": state,
-                    "balance": balance,
-                    "deposit": deposit,
-                    "score": score
-                };
-                $.ajax({
-                    type: "post",
-                    url: "addUserServlet",
-                    data: data,
-                    dataType: "json",
-                    async: false,
-                    success: function(json){
-                        if(parseInt(json.code) !== 0){
-                            alert("插入失败！可能已存在该条数据，或者您正在尝试插入非法的数据。");
-                        }
-                        else {
-                            alert("插入成功！");
-                        }
+            var data = {
+                "user_phone": user_phone,
+                "user_name": user_name,
+                "user_pwd": user_pwd,
+                "id": id,
+                "state": state,
+                "balance": balance,
+                "deposit": deposit,
+                "score": score
+            };
+            $.ajax({
+                type: "post",
+                url: "addUserServlet",
+                data: data,
+                dataType: "json",
+                async: false,
+                success: function(json) {
+                    if(parseInt(json.code) === 1) {
+                        alert("插入失败！可能已存在该条数据，或者您正在尝试插入非法的数据。");
                     }
-                });
-            }
+                    else {
+                        alert("插入成功！");
+                    }
+                }
+            });
             document.getElementById("add_user_phone").value = "";
             document.getElementById("add_user_name").value = "";
             document.getElementById("add_user_pwd").value = "";
@@ -147,74 +134,27 @@
             document.getElementById("add_score").value = "";
             showUserInfo();
         }
-        function initSearchUserTable() {
-            var list = new StringBuffer();
-            list.append("<table>");
-            list.append("<td width='50%'>" + "<input type='text' id='search_user_phone' class='search-input' placeholder='请输入要查找的用户手机号'>" + "</td>");
-            list.append("<td width='25%'>" + "<button class='button' onclick='searchUser()'>确认</button>" + "</td>");
-            list.append("<td width='25%'>" + "<button class='button' onclick='managementHide();showUserInfo()'>返回</button>" + "</td>");
-            list.append("</table>");
-            $(".searchManagement").html(list.toString());
-        }
-        function searchUser() {
-            var tableHeader = "<table align=\"center\" class=\"info\">" +
-                "<tr>" +
-                "<th>用户手机号</th>" +
-                "<th>用户昵称</th>" +
-                "<th>用户密码</th>" +
-                "<th>用户身份证号</th>" +
-                "<th>用户认证状态</th>" +
-                "<th>用户余额</th>" +
-                "<th>用户押金</th>" +
-                "<th>用户积分</th>" +
-                "<th colspan='2'>操作</th>" +
-                "</tr>";
-            var user_phone = $("#search_user_phone").val();
+        function deleteUser(b) {
+            var tr = b.parentNode.parentNode;
+            var user_phone = tr.getElementsByClassName("user_phone")[0].textContent;
             var data = {
                 "user_phone": user_phone
             };
             $.ajax({
                 type: "post",
-                url: "searchUserServlet",
+                url: "deleteUserServlet",
                 data: data,
                 dataType: "json",
                 success: function(json){
-                    var list = new StringBuffer();
-                    $.each(json, function (i, jsonObject) {
-                        appendList(list, jsonObject);
-                    });
-                    list.append("</table>");
-                    $(".infoDiv").html(tableHeader + list.toString());
+                    if(parseInt(json.code) === 1) {
+                        alert("删除失败！");
+                    }
+                    else {
+                        alert("删除成功！");
+                        tr.remove();
+                    }
                 }
             });
-            document.getElementById("search_user_phone").value = "";
-        }
-        function deleteUser(b) {
-            if(!confirm("确认要删除？")) {
-                window.event.returnValue = false;
-            }
-            else{
-                var tr = b.parentNode.parentNode;
-                var user_phone = tr.getElementsByClassName("user_phone")[0].textContent;
-                var data = {
-                    "user_phone": user_phone
-                };
-                $.ajax({
-                    type: "post",
-                    url: "deleteUserServlet",
-                    data: data,
-                    dataType: "json",
-                    success: function(json){
-                        if(parseInt(json.code) === 1){
-                            alert("删除失败！");
-                        }
-                        else {
-                            alert("删除成功！");
-                            tr.remove();
-                        }
-                    }
-                });
-            }
         }
         function updateUser(b) {
             var tr = b.parentNode.parentNode;
@@ -226,45 +166,31 @@
             var balance = tr.getElementsByClassName("balance")[0].textContent;
             var deposit = tr.getElementsByClassName("deposit")[0].textContent;
             var score = tr.getElementsByClassName("score")[0].textContent;
-            if (balance < 0) {
-                alert("余额不能小于0");
-                location.reload()
-            }
-            else if (deposit < 0) {
-                alert("押金不能小于0");
-                location.reload()
-            }
-            else if (score < 0) {
-                alert("积分不能小于0");
-                location.reload()
-            }
-            else {
-                var data = {
-                    "user_phone": user_phone,
-                    "user_name": user_name,
-                    "user_pwd": user_pwd,
-                    "id": id,
-                    "state": state,
-                    "balance": balance,
-                    "deposit": deposit,
-                    "score": score
-                };
-                $.ajax({
-                    type: "post",
-                    url: "updateUserServlet",
-                    data: data,
-                    dataType: "json",
-                    async: false,
-                    success: function(json){
-                        if(parseInt(json.code) === 1) {
-                            alert("更改失败！");
-                        }
-                        else {
-                            alert("更改成功！");
-                        }
+            var data = {
+                "user_phone": user_phone,
+                "user_name": user_name,
+                "user_pwd": user_pwd,
+                "id": id,
+                "state": state,
+                "balance": balance,
+                "deposit": deposit,
+                "score": score
+            };
+            $.ajax({
+                type: "post",
+                url: "updateUserServlet",
+                data: data,
+                dataType: "json",
+                async: false,
+                success: function(json) {
+                    if(parseInt(json.code) === 1) {
+                        alert("更改失败！");
                     }
-                });
-            }
+                    else {
+                        alert("更改成功！");
+                    }
+                }
+            });
         }
         function managementHide() {
             $('.managementDiv').hide();
@@ -274,45 +200,199 @@
             $('.managementDiv').show();
             $('.buttonSet').hide()
         }
+        function initTable() {
+            $('#user_info').bootstrapTable('destroy');
+            $("#user_info").bootstrapTable({
+                //使用post请求到服务器获取数据
+                method: "post",
+                //获取数据的Servlet地址
+                url: "userServlet",
+                //表格显示条纹
+                striped: true,
+                //启动分页
+                pagination: true,
+                //每页显示的记录数
+                pageSize: 20,
+                //当前第几页
+                pageNumber:1,
+                //记录数可选列表
+                pageList: [10, 15, 20, 25, 30],
+                //是否启用查询
+                search: false,
+                //显示下拉框勾选要显示的列
+                showColumns: true,
+                //显示刷新按钮
+                showRefresh: true,
+                //设置是由客户端分页还是由服务端分页
+                sidePagination: "client",
+                columns: [{
+                    field: 'user_phone',
+                    title: '用户手机号',
+                    sortable: true,
+                    editable: {
+                        title: '输入用户手机号',
+                        type: 'text',
+                        validate: function (v) {
+                            if (!v) {
+                                return '用户手机号不能为空';
+                            }
+                            else if (isNaN(v)) {
+                                return '用户手机号必须是数字';
+                            }
+                            else if (v.length !== 11) {
+                                return '用户手机号需满11位';
+                            }
+                            else if (parseInt(v) <= 0) {
+                                return "不是手机号";
+                            }
+                        }
+                    }
+                }, {
+                    field: 'user_name',
+                    title: '用户姓名',
+                    type: 'text',
+                    disabled: false,
+                    editable: {
+                        title: '输入用户姓名',
+                        type: 'text',
+                        validate: function (v) {
+                            if (!v) {
+                                return '用户姓名不能为空';
+                            }
+                        }
+                    }
+                }, {
+                    field: 'id',
+                    title: '用户身份证号码',
+                    sortable: true,
+                    editable: {
+                        title: '输入用户身份证号码',
+                        type: 'text',
+                        validate: function (v) {
+                            if (v.length !== 18) {
+                                return '用户身份证号码需满18位';
+                            }
+                        }
+                    }
+                }, {
+                    field: 'user_pwd',
+                    title: '用户密码',
+                    editable: {
+                        title: '输入用户密码',
+                        type: 'text',
+                        validate: function (v) {
+                            if (!v) {
+                                return '用户密码不能为空';
+                            }
+                            else if (v.length < 10 && v.length > 18) {
+                                return '用户密码需在10位与18位之间';
+                            }
+                        }
+                    }
+                }, {
+                    field: 'deposit',
+                    title: '用户押金',
+                    editable: {
+                        title: '输入用户押金',
+                        type: 'text',
+                        validate: function (v) {
+                            if (isNaN(v)) {
+                                return '用户押金必须是数字';
+                            }
+                            else if (parseInt(v) <= 0) {
+                                return "用户押金不能小于0";
+                            }
+                        }
+                    }
+                }, {
+                    field: 'balance',
+                    title: '用户余额',
+                    editable: {
+                        title: '输入用户余额',
+                        type: 'text',
+                        validate: function (v) {
+                            if (isNaN(v)) {
+                                return '用户余额必须是数字';
+                            }
+                            else if (parseInt(v) <= 0) {
+                                return "用户余额不能小于0";
+                            }
+                        }
+                    }
+                }, {
+                    field: 'score',
+                    title: '用户积分',
+                    editable: {
+                        title: '输入用户积分',
+                        type: 'text',
+                        validate: function (v) {
+                            if (isNaN(v)) {
+                                return '用户积分必须是数字';
+                            }
+                        }
+                    }
+                }, {
+                    field: 'state',
+                    title: '用户认证状态',
+                    editable: {
+                        type: 'select',
+                        title: '选择用户认证状态',
+                        source: [{
+                            value: 0,
+                            text: '未认证'
+                        }, {
+                            value: 1,
+                            text: '已认证'
+                        }]
+                    }
+                }]
+            });
+        }
     </script>
 </head>
 <body>
-<div class="root">
-    <header class="page-header">
-        <div class="container">
-            <div class="page-header-info">
-                <b><label>用户管理</label></b>
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container navbar-left">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="index.html">“快租车”后台管理</a>
+            </div>
+            <div>
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <a href="#">用户管理</a>
+                    </li>
+                    <li>
+                        <a href="car_management.html">车辆管理</a>
+                    </li>
+                    <li>
+                        <a href="car_type_management.html">车辆类型管理</a>
+                    </li>
+                    <li>
+                        <a href="shop_management.html">服务点管理</a>
+                    </li>
+                    <li>
+                        <a href="order_management.html">订单管理</a>
+                    </li>
+                </ul>
             </div>
         </div>
-    </header>
+    </nav>
     <div class="page-wrapper">
-        <div class="container">
-            <h2></h2>
-            <div class="col-list-1">
-                <a href="user_management.html" class="list-items" id="user_management">用户管理</a>
-                <a href="car_management.html" class="list-items" id="car_management">车辆管理</a>
-                <a href="car_type_management.html" class="list-items" id="car_type_management">车辆类型管理</a>
-                <a href="shop_management.html" class="list-items" id="shop_management">服务点管理</a>
-                <a href="order_management.html" class="list-items" id="order_management">订单管理</a>
-                <!--<a href="./bac_management.html" class="list-items" id="bac_management">违约记录管理</a>-->
-                <!--<a href="./peccancy_management.html" class="list-items" id="peccancy_management">违章记录管理</a>-->
-                <!--<a href="./accident_management.html" class="list-items" id="accident_management">事故记录管理</a>-->
-            </div>
-            <div class="col-info-9">
-                <div class="infoInterface">
-                    <div align="center" class="managementDiv">
-                        <div class="addManagement"></div>
-                        <div class="searchManagement"></div>
-                    </div>
-                    <div class="buttonSet">
-                        <input type="button" class="button" onclick="managementShow();$('.addManagement').show();$('.searchManagement').hide()" value="添加用户数据">
-                        <input type="button" class="button" onclick="managementShow();$('.addManagement').hide();$('.searchManagement').show()" value="查找用户数据">
-                    </div>
-                    <div align="center" class="infoDiv"></div>
-                </div>
-            </div>
+        <div align="center" class="managementDiv">
+            <div class="addManagement"></div>
+            <div class="searchManagement"></div>
         </div>
+        <div class="buttonSet">
+            <input type="button" class="button" onclick="managementShow();$('.addManagement').show();$('.searchManagement').hide()" value="添加用户数据">
+            <input type="button" class="button" onclick="managementShow();$('.addManagement').hide();$('.searchManagement').show()" value="查找用户数据">
+        </div>
+        <div align="center" class="infoDiv"></div>
+        <div id="toolbar">
+            <!--如果这里是表单的话，设置文本框监听回车键再按下回车键时会导致页面刷新-->
+            <input type="text" class="form-control" id="search_text" placeholder="请输入用户手机号" style="float: left">
+            <input type="button" id="search_btn" class="btn btn-default" width="20%" style="position: fixed" value="搜索">
+        </div>
+        <table id="user_info" class="table table-bordered tab-content" data-toolbar="#toolbar"></table>
     </div>
-</div>
 </body>
 </html>

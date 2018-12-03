@@ -4,36 +4,46 @@
     <meta charset="utf-8">
     <title>管理页面</title>
     <link rel="stylesheet" href="css/html.css">
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
 </head>
 <body>
-<div class="root">
-    <header class="page-header">
-        <div class="container">
-            <div class="page-header-info">
-                <b><label>管理页面</label></b>
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container navbar-left">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">“快租车”后台管理</a>
+            </div>
+            <div>
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="user_management.html">用户管理</a>
+                    </li>
+                    <li>
+                        <a href="car_management.html">车辆管理</a>
+                    </li>
+                    <li>
+                        <a href="car_type_management.html">车辆类型管理</a>
+                    </li>
+                    <li>
+                        <a href="shop_management.html">服务点管理</a>
+                    </li>
+                    <li>
+                        <a href="order_management.html">订单管理</a>
+                    </li>
+                </ul>
             </div>
         </div>
-    </header>
+    </nav>
     <div class="page-wrapper">
-        <div class="container">
-            <div class="col-list-1">
-                <a href="user_management.html" class="list-items" id="user_management">用户管理</a>
-                <a href="car_management.html" class="list-items" id="car_management">车辆管理</a>
-                <a href="car_type_management.html" class="list-items" id="car_type_management">车辆类型管理</a>
-                <a href="shop_management.html" class="list-items" id="shop_management">门店管理</a>
-                <a href="order_management.html" class="list-items" id="order_management">订单管理</a>
-                <!--<a href="bac_management.html" class="list-items" id="bac_management">违约记录管理</a>-->
-                <!--<a href="peccancy_management.html" class="list-items" id="peccancy_management">违章记录管理</a>-->
-                <!--<a href="accident_management.html" class="list-items" id="accident_management">事故记录管理</a>-->
-            </div>
-            <div class="col-info-9">
-                <div class="col-info">
-                    <h2>“快租车”后台管理系统</h2>
-                    <h3>这是一个湖南大学软件工程导论的团队项目——“快租车”车辆租赁的后台管理系统，<br>由软件1602班“表面组”开发，组员有姜新宇、陈松、刘天赛、刘益以及林玉俊。<br>现在你访问的是后台管理页面，可以点击左边的按钮来进行相应的功能切换。</h3>
-                </div>
-            </div>
+        <div class="col-info">
+            <h2>“快租车”后台管理系统</h2>
+            <h3>
+                这是一个湖南大学软件工程导论的团队项目——“快租车”车辆租赁的后台管理系统，<br>
+                由软件1602班“表面组”开发，组员有姜新宇、陈松、刘天赛、刘益以及林玉俊。<br>
+                现在你访问的是后台管理页面，可以点击上方的按钮来进行相应的功能切换。
+            </h3>
         </div>
     </div>
-</div>
 </body>
 </html>
