@@ -1,0 +1,174 @@
+body {
+    background-color: #eee;
+}
+/* 盒子模型 */
+.contain {
+    margin: 150px auto;
+    height: 500px;
+    background-color: #3AB397;
+    border: 0.2px solid #3AB397;
+    border-radius: 10px 10px 10px 10px;
+    color: #3AB397;
+    min-width: 800px;
+    max-width: 1000px;
+}
+/* 左边部分 */
+.left {
+    width: 35%;
+    height: 400px;
+    padding-bottom: 100px;
+    float: left;
+    text-align: center;
+    font-family: Candara ;
+    color: White;
+}
+.app {
+    height: 110px;
+    padding-top: 20px;
+    padding-left: 20px;
+    text-align: left;
+}
+/* 右边部分 */
+.right {
+    width: 65%;
+    height: 400px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    float: left;
+    background-color: white;
+    text-align: center;
+}
+/* 文字标题样式 右-左 */
+.head {
+    text-align: center;
+    color: #3AB397;
+    font-size: 37px;
+}
+.head p {
+    color: white;
+}
+/* 提示语部分 */
+.blank {
+    height: 130px;
+}
+.picture {
+    height: 92px;
+}
+.text {
+    text-align: center;
+    color: white;
+    font-size: 15px;
+    height: 20px;
+}
+.text p {
+    color: lightgrey;
+}
+a {
+    color: white;
+}
+a:link {
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+/* 右边登陆部分 */
+.login {
+    text-align: center;
+}
+table {
+    width: 100%;
+}
+table tr td {
+    text-align: center;
+}
+/* 文本框样式 */
+.box{
+    height: 50px;
+    background: transparent;
+}
+.box .name{
+    background-color: #F5F9F7;
+    border: none;
+    height: 40px;
+    width: 300px;
+    padding-left: 30px;
+
+    background: url("../images/people.png") no-repeat;
+    background-color: #F5F9F7;
+    background-position: 3px;
+    background-size:22px 15px;
+
+    outline: none;
+}
+.box .password {
+    background-color: #F5F9F7;
+    border: none;
+    height: 40px;
+    width: 300px;
+    padding-left: 30px;
+
+    background: url("../images/pw.png") no-repeat;
+    background-color: #F5F9F7;
+    background-position: 3px;
+    background-size:20px 15px;
+
+    outline: none;
+}
+/* 按钮样式 */
+.button1{
+    background-color: #3AB397;
+    border: none;
+    color: white;
+    width: 200px;
+    padding: 12px;
+    font-size: 15px;
+    border-radius:25px;
+
+    display: inline-block;
+    transition: all 0.5s;
+    cursor: pointer;
+}
+.button1 span {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    transition: 0.5s;
+}
+.button1 span:after {
+    content: '»';
+    position: absolute;
+    opacity: 0;
+    top: 0;
+    right: -20px;
+    transition: 0.5s;
+}
+.button1:hover span {
+    padding-right: 25px;
+}
+.button1:hover span:after {
+    opacity: 1;
+    right: 0;
+}
+.button3 {
+    padding: 15px;
+    margin: 20px 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 15px;
+
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    cursor: pointer;
+
+    background-color: white;
+    color: black;
+    border: 1px solid #e7e7e7;
+    border-radius: 25px;
+}
+.button3:hover {
+    background-color: #e7e7e7;
+}

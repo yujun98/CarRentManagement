@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>车辆管理</title>
+    <link rel="stylesheet" href="css/html.css">
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $("#car_management").addClass('selected');
+            $('.managementDiv').hide();
+            showCarInfo();
+            initAddCarTable();
+            initSearchCarTable();
+        });
+        function appendList(list, jsonObject) {
+            list.append("<tr>");
+            list.append("<td class='car_number'>" + jsonObject.car_number + "</td>");
+            list.append("<td class='plate_number' contentEditable='true'>" + jsonObject.plate_number + "</td>");
+            list.append("<td class='car_name' contentEditable='true'>" + jsonObject.car_name + "</td>");
+            list.append("<td class='car_state' contentEditable='true'>" + jsonObject.car_state + "</td>");
+            list.append("<td class='shop_number' contentEditable='true'>" + jsonObject.shop_number + "</td>");
+            list.append("<td colspan='1'>" + "<input type='button' class='operation-button' onclick='deleteCar(this)' value='删除'>" + "</td>");
+            list.append("<td colspan='1'>" + "<input type='button' class='operation-button' onclick='updateCar(this)' value='更改'>" + "</td>");
+            list.append("</tr>");
+        }
+        function showCarInfo(){
+            var tableHeader = "<table align=\"center\" class=\"info\">" +
+                "<tr>" +
+                "<th>汽车编号</th>" +
+                "<th>汽车牌号</th>" +
+                "<th>汽车名称</th>" +
+                "<th>汽车状态</th>" +
+                "<th>服务点编号</th>" +
+                "<th colspan='2'>操作</th>" +
+                "</tr>";
+            $.ajax({
+                type: "post",
+                url: "carServlet",
+                dataType: "json",
+                success: function(json){
+                    var list = new StringBuffer();
+                    $.each(json, function (i, jsonObject) {
+                        appendList(list, jsonObject);
+                    });
+                    list.append("</table>");
+                    $(".infoDiv").html(tableHeader + list.toString());
+                }
+            });
+        }
+        function StringBuffer() {
+            this.__strings__ = [];
+        }
+        StringBuffer.prototype.append = function (str) {
+            this.__strings__.push(str);
+            return this;
+        };
+        StringBuffer.prototype.toString = function () {
+            return this.__strings__.join("");
+        };
+        function initAddCarTable() {
+            var tableHeader = "<table align=\"center\" class=\"info\">" +
+                "<tr>" +
+                "<th>汽车编号</th>" +
+                "<th>汽车牌号</th>" +
+                "<th>汽车名称</th>" +
+                "<th>汽车状态</th>" +
+                "<th>服务点编号</th>" +
+                "</tr>";
+            var list = new StringBuffer();
+            list.append("<tr>");
+            list.append("<td>" + "<input type='text' id='add_car_number' class='add-input' placeholder='请输入汽车编号（必填）'>" + "</td>");
+            list.append("<td>" + "<input type='text' id='add_plate_number' class='add-input' placeholder='请输入汽车牌号（必填）'>" + "</td>");
+            list.append("<td>" + "<input type='text' id='add_car_name' class='add-input' placeholder='请输入汽车品牌名（必填）'>" + "</td>");
+            list.append("<td>" + "<select id='add_car_state'>" + "<option value='' selected>请选择汽车状态</option>" + "<option value='已租'>已租</option>" + "<option value='未租'>未租</option>" + "<option value='报修'>报修</option>" + "</td>");
+            list.append("<td>" + "<input type='text' id='add_shop_number' class='add-input' placeholder='请输入服务点编号（必填）'>" + "</td>");
+            list.append("</tr>");
+            list.append("</table>");
+            list.append("<button class='button' onclick='addCar()'>确认添加</button>");
+            list.append("<button class='button' onclick='managementHide()'>返回</button>");
+            $(".addManagement").html(tableHeader + list.toString());
+        }
+        function addCar() {
+            var car_number = $("#add_car_number").val();
+            var plate_number = $("#add_plate_number").val();
+            var car_name = $("#add_car_name").val();
+            var car_state = $("#add_car_state").val();
+            var shop_number = $("#add_shop_number").val();
+            var data = {
+                "car_number": car_number,
+                "plate_number": plate_number,
+                "car_name": car_name,
+                "car_state": car_state,
+                "shop_number": shop_number
+            };
+            $.ajax({
+                type: "post",
+                url: "addCarServlet",
+                data: data,
+                dataType: "json",
+                async: false,
+                success: function(json){
+                    if(parseInt(json.code) !== 0){
+                        alert("插入失败！可能已存在该条数据，或者您正在尝试插入非法的数据。");
+                    }
+                    else {
+                        alert("插入成功！");
+                    }
+                }
+            });
+            document.getElementById("add_car_number").value = "";
+            document.getElementById("add_plate_number").value = "";
+            document.getElementById("add_car_name").value = "";
+            document.getElementById("add_car_state").value = "";
+            document.getElementById("add_shop_number").value = "";
+            showCarInfo();
+        }
+        function initSearchCarTable() {
+            var list = new StringBuffer();
+            list.append("<table>");
+            list.append("<td width='50%'>" + "<input type='text' id='search_car_number' class='search-input' placeholder='请输入要查找的汽车编号'>" + "</td>");
+            list.append("<td width='25%'>" + "<button class='button' onclick='searchCar()'>确认</button>" + "</td>");
+            list.append("<td width='25%'>" + "<button class='button' onclick='managementHide();showCarInfo()'>返回</button>" + "</td>");
+            list.append("</table>");
+            $(".searchManagement").html(list.toString());
+        }
+        function searchCar() {
+            var tableHeader = "<table align=\"center\" class=\"info\">" +
+                "<tr>" +
+                "<th>汽车编号</th>" +
+                "<th>汽车牌号</th>" +
+                "<th>汽车名称</th>" +
+                "<th>汽车状态</th>" +
+                "<th>服务点编号</th>" +
+                "<th colspan='2'>操作</th>" +
+                "</tr>";
+            var car_number = $("#search_car_number").val();
+            var data = {
+                "car_number": car_number
+            };
+            $.ajax({
+                type: "post",
+                url: "searchCarServlet",
+                data: data,
+                dataType: "json",
+                success: function(json){
+                    var list = new StringBuffer();
+                    $.each(json, function (i, jsonObject) {
+                        appendList(list, jsonObject);
+                    });
+                    list.append("</table>");
+                    $(".infoDiv").html(tableHeader + list.toString());
+                }
+            });
+            document.getElementById("search_car_number").value = "";
+        }
+        function deleteCar(b) {
+            if(!confirm("确认要删除？")) {
+                window.event.returnValue = false;
+            }
+            else{
+                var tr = b.parentNode.parentNode;
+                var car_number = tr.getElementsByClassName("car_number")[0].textContent;
+                var data = {
+                    "car_number": car_number
+                };
+                $.ajax({
+                    type: "post",
+                    url: "deleteCarServlet",
+                    data: data,
+                    dataType: "json",
+                    success: function(json){
+                        if(parseInt(json.code) === 1){
+                            alert("删除失败！");
+                        }
+                        else {
+                            alert("删除成功！");
+                            tr.remove();
+                        }
+                    }
+                });
+            }
+        }
+        function updateCar(b) {
+            var tr = b.parentNode.parentNode;
+            var car_number = tr.getElementsByClassName("car_number")[0].textContent;
+            var plate_number = tr.getElementsByClassName("plate_number")[0].textContent;
+            var car_name = tr.getElementsByClassName("car_name")[0].textContent;
+            var car_state = tr.getElementsByClassName("car_state")[0].textContent;
+            var shop_number = tr.getElementsByClassName("shop_number")[0].textContent;
+            var data = {
+                "car_number": car_number,
+                "plate_number": plate_number,
+                "car_name": car_name,
+                "car_state": car_state,
+                "shop_number": shop_number
+            };
+            $.ajax({
+                type: "post",
+                url: "updateCarServlet",
+                data: data,
+                dataType: "json",
+                async: false,
+                success: function(json){
+                    if(parseInt(json.code) === 1){
+                        alert("更改失败！");
+                    }
+                    else {
+                        alert("更改成功！");
+                    }
+                }
+            });
+        }
+        function managementHide() {
+            $('.managementDiv').hide();
+            $('.buttonSet').show()
+        }
+        function managementShow() {
+            $('.managementDiv').show();
+            $('.buttonSet').hide()
+        }
+    </script>
+</head>
+<body>
+<div class="root">
+    <header class="page-header">
+        <div class="container">
+            <div class="page-header-info">
+                <b><label>车辆管理</label></b>
+            </div>
+        </div>
+    </header>
+    <div class="page-wrapper">
+        <div class="container">
+            <h2></h2>
+            <div class="col-list-1">
+                <a href="user_management.html" class="list-items" id="user_management">用户管理</a>
+                <a href="car_management.html" class="list-items" id="car_management">车辆管理</a>
+                <a href="car_type_management.html" class="list-items" id="car_type_management">车辆类型管理</a>
+                <a href="shop_management.html" class="list-items" id="shop_management">服务点管理</a>
+                <a href="order_management.html" class="list-items" id="order_management">订单管理</a>
+                <!--<a href="./bac_management.html" class="list-items" id="bac_management">违约记录管理</a>-->
+                <!--<a href="./peccancy_management.html" class="list-items" id="peccancy_management">违章记录管理</a>-->
+                <!--<a href="./accident_management.html" class="list-items" id="accident_management">事故记录管理</a>-->
+            </div>
+            <div class="col-info-9">
+                <div class="infoInterface">
+                    <div align="center" class="managementDiv">
+                        <div class="addManagement"></div>
+                        <div class="searchManagement"></div>
+                    </div>
+                    <div class="buttonSet">
+                        <input type="button" class="button" onclick="managementShow();$('.addManagement').show();$('.searchManagement').hide()" value="添加汽车数据">
+                        <input type="button" class="button" onclick="managementShow();$('.addManagement').hide();$('.searchManagement').show()" value="查找汽车数据">
+                    </div>
+                    <div align="center" class="infoDiv"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
