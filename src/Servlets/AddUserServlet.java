@@ -33,15 +33,6 @@ public class AddUserServlet extends HttpServlet {
             float deposit = Float.parseFloat(request.getParameter("deposit"));
             float score = Float.parseFloat(request.getParameter("score"));
 
-            if (user_phone.length() == 0) {
-                user_phone = null;
-            }
-            if (user_name.length() == 0) {
-                user_name = null;
-            }
-            if (user_pwd.length() == 0) {
-                user_pwd = null;
-            }
             if (id.length() == 0) {
                 id = null;
             }

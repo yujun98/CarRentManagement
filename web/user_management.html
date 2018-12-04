@@ -7,108 +7,50 @@
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/bootstrap3-editable/css/bootstrap-editable.css">
     <link rel="stylesheet" href="assets/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="assets/bootstrap-select/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="assets/bootstrap-validator/css/bootstrapValidator.min.css">
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="assets/bootstrap-table/bootstrap-table.min.js"></script>
     <script src="assets/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
     <script src="assets/bootstrap-table/extensions/editable/bootstrap-table-editable.min.js"></script>
     <script src="assets/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+    <script src="assets/bootstrap-select/js/bootstrap-select.min.js"></script>
+    <script src="assets/bootstrap-select/js/i18n/defaults-zh_CN.min.js"></script>
+    <script src="assets/bootstrap-validator/js/bootstrapValidator.min.js"></script>
     <script>
         $(document).ready(function(){
-            $('.managementDiv').hide();
             initTable();
+            vadidateModal();
             $('#search_text').keydown(function (e) {
                 if (e.keyCode === 13) {
                     $('#search_btn').click();
                 }
             });
-            $('#search_btn').click(function () {
-                var user_phone = $("#search_text").val();
-                var data = {
-                    "user_phone": user_phone
-                };
-                $.ajax({
-                    type: "post",
-                    url: "searchUserServlet",
-                    data: data,
-                    dataType: "json",
-                    success: function(json){
-                        $('#user_info').bootstrapTable('load', json);
-                    }
-                });
-                document.getElementById("search_text").value = "";
-            })
         });
-        function appendList(list, jsonObject) {
-            list.append("<tr>");
-            list.append("<td class='user_phone'>" + jsonObject.user_phone + "</td>");
-            list.append("<td class='user_name' contentEditable='true'>" + jsonObject.user_name + "</td>");
-            list.append("<td class='user_pwd' contentEditable='true'>" + jsonObject.user_pwd + "</td>");
-            list.append("<td class='id' contentEditable='true'>" + jsonObject.id + "</td>");
-            list.append("<td class='state' contentEditable='true'>" + jsonObject.state + "</td>");
-            list.append("<td class='balance' contentEditable='true'>" + jsonObject.balance + "</td>");
-            list.append("<td class='deposit' contentEditable='true'>" + jsonObject.deposit + "</td>");
-            list.append("<td class='score' contentEditable='true'>" + jsonObject.score + "</td>");
-            list.append("<td colspan='1'>" + "<input type='button' class='operation-button' onclick='deleteUser(this)' value='删除'>" + "</td>");
-            list.append("<td colspan='1'>" + "<input type='button' class='operation-button' onclick='updateUser(this)' value='更改'>" + "</td>");
-            list.append("</tr>");
-        }
-        function StringBuffer() {
-            this.__strings__ = [];
-        }
-        StringBuffer.prototype.append = function (str) {
-            this.__strings__.push(str);
-            return this;
-        };
-        StringBuffer.prototype.toString = function () {
-            return this.__strings__.join("");
-        };
-        function initAddUserTable() {
-            var tableHeader = "<table align=\"center\" class=\"info\">" +
-                "<tr>" +
-                "<th>用户手机号</th>" +
-                "<th>用户昵称</th>" +
-                "<th>用户密码</th>" +
-                "<th>用户身份证号</th>" +
-                "<th>用户认证状态</th>" +
-                "<th>用户余额</th>" +
-                "<th>用户押金</th>" +
-                "<th>用户积分</th>" +
-                "</tr>";
-            var list = new StringBuffer();
-            list.append("<tr>");
-            list.append("<td>" + "<input type='text' id='add_user_phone' class='add-input' placeholder='请输入用户手机号'>" + "</td>");
-            list.append("<td>" + "<input type='text' id='add_user_name' class='add-input' placeholder='请输入用户昵称'>" + "</td>");
-            list.append("<td>" + "<input type='text' id='add_user_pwd' class='add-input' placeholder='请输入用户密码'>" + "</td>");
-            list.append("<td>" + "<input type='text' id='add_id' class='add-input' placeholder='请输入用户身份证号码'>" + "</td>");
-            list.append("<td>" + "<input type='text' id='add_state' class='add-input' placeholder='请输入用户认证状态'>" + "</td>");
-            list.append("<td>" + "<input type='text' id='add_balance' class='add-input' placeholder='请输入用户余额'>" + "</td>");
-            list.append("<td>" + "<input type='text' id='add_deposit' class='add-input' placeholder='请输入用户押金'>" + "</td>");
-            list.append("<td>" + "<input type='text' id='add_score' class='add-input' placeholder='请输入用户积分'>" + "</td>");
-            list.append("</tr>");
-            list.append("</table>");
-            list.append("<button class='button' onclick='addUser()'>确认添加</button>");
-            list.append("<button class='button' onclick='managementHide()'>返回</button>");
-            $(".addManagement").html(tableHeader + list.toString());
-        }
         function addUser() {
-            var user_phone = $("#add_user_phone").val();
-            var user_name = $("#add_user_name").val();
-            var user_pwd = $("#add_user_pwd").val();
-            var id = $("#add_id").val();
-            var state = $("#add_state").val();
-            var balance = $("#add_balance").val();
-            var deposit = $("#add_deposit").val();
-            var score = $("#add_score").val();
+            $('#add_user_form').data('bootstrapValidator').validate();
+            if(!$('#add_user_form').data('bootstrapValidator').isValid()){
+                return ;
+            }
+            $('#add_modal').modal('hide');
+            var user_phone = $('#add_user_phone').val();
+            var user_name = $('#add_user_name').val();
+            var id = $('#add_id').val();
+            var user_pwd = $('#add_user_pwd').val();
+            var balance = $('#add_balance').val();
+            var deposit = $('#add_deposit').val();
+            var score = $('#add_score').val();
+            var state = $('#add_state').val();
             var data = {
                 "user_phone": user_phone,
                 "user_name": user_name,
-                "user_pwd": user_pwd,
                 "id": id,
-                "state": state,
+                "user_pwd": user_pwd,
                 "balance": balance,
                 "deposit": deposit,
-                "score": score
+                "score": score,
+                "state": state
             };
             $.ajax({
                 type: "post",
@@ -118,22 +60,31 @@
                 async: false,
                 success: function(json) {
                     if(parseInt(json.code) === 1) {
-                        alert("插入失败！可能已存在该条数据，或者您正在尝试插入非法的数据。");
+                        alert("添加失败！");
                     }
                     else {
-                        alert("插入成功！");
+                        alert("添加成功！");
                     }
                 }
             });
-            document.getElementById("add_user_phone").value = "";
-            document.getElementById("add_user_name").value = "";
-            document.getElementById("add_user_pwd").value = "";
-            document.getElementById("add_id").value = "";
-            document.getElementById("add_state").value = "";
-            document.getElementById("add_balance").value = "";
-            document.getElementById("add_deposit").value = "";
-            document.getElementById("add_score").value = "";
-            showUserInfo();
+            $('#user_info').bootstrapTable('append', data);
+            resetModal();
+        }
+        function searchUser() {
+            var user_phone = $("#search_text").val();
+            var data = {
+                "user_phone": user_phone
+            };
+            $.ajax({
+                type: "post",
+                url: "searchUserServlet",
+                data: data,
+                dataType: "json",
+                success: function(json){
+                    $('#user_info').bootstrapTable('load', json);
+                }
+            });
+            $('#search_text').val('');
         }
         function deleteUser(b) {
             var tr = b.parentNode.parentNode;
@@ -156,50 +107,6 @@
                     }
                 }
             });
-        }
-        function updateUser(b) {
-            var tr = b.parentNode.parentNode;
-            var user_phone = tr.getElementsByClassName("user_phone")[0].textContent;
-            var user_name = tr.getElementsByClassName("user_name")[0].textContent;
-            var user_pwd = tr.getElementsByClassName("user_pwd")[0].textContent;
-            var id = tr.getElementsByClassName("id")[0].textContent;
-            var state = tr.getElementsByClassName("state")[0].textContent;
-            var balance = tr.getElementsByClassName("balance")[0].textContent;
-            var deposit = tr.getElementsByClassName("deposit")[0].textContent;
-            var score = tr.getElementsByClassName("score")[0].textContent;
-            var data = {
-                "user_phone": user_phone,
-                "user_name": user_name,
-                "user_pwd": user_pwd,
-                "id": id,
-                "state": state,
-                "balance": balance,
-                "deposit": deposit,
-                "score": score
-            };
-            $.ajax({
-                type: "post",
-                url: "updateUserServlet",
-                data: data,
-                dataType: "json",
-                async: false,
-                success: function(json) {
-                    if(parseInt(json.code) === 1) {
-                        alert("更改失败！");
-                    }
-                    else {
-                        alert("更改成功！");
-                    }
-                }
-            });
-        }
-        function managementHide() {
-            $('.managementDiv').hide();
-            $('.buttonSet').show()
-        }
-        function managementShow() {
-            $('.managementDiv').show();
-            $('.buttonSet').hide()
         }
         function initTable() {
             $('#user_info').bootstrapTable('destroy');
@@ -229,25 +136,7 @@
                 columns: [{
                     field: 'user_phone',
                     title: '用户手机号',
-                    sortable: true,
-                    editable: {
-                        title: '输入用户手机号',
-                        type: 'text',
-                        validate: function(v) {
-                            if (!v) {
-                                return '用户手机号不能为空';
-                            }
-                            else if (isNaN(v)) {
-                                return '用户手机号必须是数字';
-                            }
-                            else if (v.length !== 11) {
-                                return '用户手机号需满11位';
-                            }
-                            else if (parseInt(v) <= 0) {
-                                return "不是手机号";
-                            }
-                        }
-                    }
+                    sortable: true
                 }, {
                     field: 'user_name',
                     title: '用户昵称',
@@ -377,6 +266,97 @@
                 }
             });
         }
+        function vadidateModal() {
+            $('#add_user_form').bootstrapValidator({
+                feedbackIcons: {
+                    invalid: 'glyphicon glyphicon-remove',
+                    validating: 'glyphicon glyphicon-refresh'
+                },
+                fields: {
+                    user_phone: {
+                        validators: {
+                            notEmpty: {
+                                message: '用户手机号不能为空'
+                            },
+                            stringLength: {
+                                min: 11,
+                                max: 11,
+                                message: '用户手机号必须为11位'
+                            },
+                            regexp: {
+                                regexp: /^[0-9]+$/,
+                                message: '用户手机号必须都为数字'
+                            }
+                        }
+                    },
+                    user_name: {
+                        validators: {
+                            notEmpty: {
+                                message: '用户昵称不能为空'
+                            }
+                        }
+                    },
+                    id: {
+                        validators: {
+                            stringLength: {
+                                min: 18,
+                                max: 18,
+                                message: '身份证号必须为18位'
+                            },
+                            regexp: {
+                                regexp: /^[0-9xX]+$/,
+                                message: '身份证格式不符'
+                            }
+                        }
+                    },
+                    user_pwd: {
+                        validators: {
+                            notEmpty: {
+                                message: '用户密码不能为空'
+                            },
+                            stringLength: {
+                                min: 6,
+                                max: 18,
+                                message: '用户密码必须在6至18位之间'
+                            }
+                        }
+                    },
+                    deposit: {
+                        validators: {
+                            notEmpty: {
+                                message: '押金不能为空'
+                            },
+                            regexp: {
+                                regexp: /^[0-9]+$/,
+                                message: '押金必须为非负数'
+                            }
+                        }
+                    },
+                    balance: {
+                        validators: {
+                            notEmpty: {
+                                message: '余额不能为空'
+                            }
+                        }
+                    },
+                    score: {
+                        validators: {
+                            notEmpty: {
+                                message: '积分不能为空'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        function resetModal() {
+            //虽然选择项确实改变了，但是文本提示内容还是不变，不知为何
+            $('#add_state').selectedIndex = 0;
+            $('#add_user_form').find('input').val('');
+            $('#add_user_form').data('bootstrapValidator').destroy();
+            $('#add_user_form').data('bootstrapValidator', null);
+            vadidateModal();
+        }
     </script>
 </head>
 <body>
@@ -411,8 +391,79 @@
             <div align="center" class="infoDiv"></div>
             <div id="toolbar">
                 <!--如果这里是表单的话，设置文本框监听回车键再按下回车键时会导致页面刷新-->
-                <input type="text" id="search_text" class="form-control" placeholder="请输入用户手机号" style="float: left">
-                <input type="button" id="search_btn" class="btn btn-default" width="20%" style="position: fixed" value="搜索">
+                <input type="text" id="search_text" class="form-control" placeholder="请输入用户手机号" style="float: left;">
+                <input type="button" id="search_btn" class="btn btn-default" style="float: left; position: absolute;" value="搜索" onclick="searchUser()">
+                <!--这里找不到好的方法可以试三个 input 处于同一行，只能通过 margin 来变通-->
+                <input type="button" class="btn btn-primary" data-toggle="modal" data-target="#add_modal" style="float: left; position:absolute; margin-left: 60px" value="添加用户">
+            </div>
+            <div class="modal fade" id="add_modal" role="dialog" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="resetModal()">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel">添加用户</h4>
+                        </div>
+                        <div id="add_user_form">
+                            <div class="form-horizontal modal-body">
+                                <div class="form-group">
+                                    <label for="add_user_phone" class="col-sm-3 control-label">用户手机号</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" id="add_user_phone" name="user_phone" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add_user_name" class="col-sm-3 control-label">用户昵称</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" id="add_user_name" name="user_name" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add_id" class="col-sm-3 control-label">用户身份证号</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" id="add_id" name="id" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add_user_pwd" class="col-sm-3 control-label">用户密码</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" id="add_user_pwd" name="user_pwd" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add_deposit" class="col-sm-3 control-label">用户押金</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" id="add_deposit" name="deposit" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add_balance" class="col-sm-3 control-label">用户余额</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" id="add_balance" name="balance" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add_score" class="col-sm-3 control-label">用户积分</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" id="add_score" name="score" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add_state" class="col-sm-3 control-label">用户认证状态</label>
+                                    <div class="col-sm-7">
+                                        <select id="add_state" class="selectpicker show-tick form-control" data-live-search="true">
+                                            <option value="0" class="selected">未认证</option>
+                                            <option value="1">已认证</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-default" data-dismiss="modal" onclick="resetModal()">取消</button>
+                                <button class="btn btn-primary" onclick="addUser()">确认添加</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <table id="user_info" class="table table-bordered tab-content" data-toolbar="#toolbar"></table>
         </div>
