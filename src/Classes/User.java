@@ -9,8 +9,6 @@ public class User {
     private String user_pwd;
     //用户身份证号
     private String id;
-    //用户状态：是否认证
-    private int state;
     //用户余额
     private float balance;
     //用户押金
@@ -29,9 +27,6 @@ public class User {
     }
     public void setId(String id) {
         this.id = id;
-    }
-    public void setState(int state) {
-        this.state = state;
     }
     public void setBalance(float balance) {
         this.balance = balance;
@@ -54,9 +49,6 @@ public class User {
     }
     public String getId() {
         return id;
-    }
-    public int getState() {
-        return state;
     }
     public float getBalance() {
         return balance;

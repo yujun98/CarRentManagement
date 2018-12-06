@@ -28,7 +28,6 @@ public class AddUserServlet extends HttpServlet {
             String user_name = request.getParameter("user_name");
             String user_pwd = request.getParameter("user_pwd");
             String id = request.getParameter("id");
-            int state = Integer.parseInt(request.getParameter("state"));
             float balance = Float.parseFloat(request.getParameter("balance"));
             float deposit = Float.parseFloat(request.getParameter("deposit"));
             float score = Float.parseFloat(request.getParameter("score"));
@@ -38,16 +37,15 @@ public class AddUserServlet extends HttpServlet {
             }
 
             Connection conn = DatabaseInit.getConnection();
-            String sql = "insert into car.user(user_phone, user_name, user_pwd, id, state, balance, deposit, score) values (?, ?, ?, ?, ?, ?, ?, ?);";
+            String sql = "insert into car.user(user_phone, user_name, user_pwd, id, balance, deposit, score) values (?, ?, ?, ?, ?, ?, ?);";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, user_phone);
             ps.setString(2, user_name);
             ps.setString(3, user_pwd);
             ps.setString(4, id);
-            ps.setInt(5, state);
-            ps.setFloat(6, balance);
-            ps.setFloat(7, deposit);
-            ps.setFloat(8, score);
+            ps.setFloat(5, balance);
+            ps.setFloat(6, deposit);
+            ps.setFloat(7, score);
             ps.executeUpdate();
         } catch (Exception e) {
             json = "{\"code\": \"1\"}";
