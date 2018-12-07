@@ -30,24 +30,8 @@ public class UpdateCarServlet extends HttpServlet {
             String car_state = request.getParameter("car_state");
             String shop_number = request.getParameter("shop_number");
 
-            if (car_number.length() == 0) {
-                car_number = null;
-            }
-            if (plate_number.length() == 0) {
-                plate_number = null;
-            }
-            if (car_name.length() == 0) {
-                car_name = null;
-            }
-            if (car_state.length() == 0) {
-                car_state = null;
-            }
-            if (shop_number.length() == 0) {
-                shop_number = null;
-            }
-
             Connection conn = DatabaseInit.getConnection();
-            String sql = "update car_rent.car set plate_number = ?, car_name = ?, car_state = ?, shop_number = ? where car_number = ?;";
+            String sql = "update car.car set plate_number = ?, car_name = ?, car_state = ?, shop_number = ? where car_number = ?;";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, plate_number);
             ps.setString(2, car_name);

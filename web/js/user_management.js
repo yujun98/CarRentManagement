@@ -94,7 +94,6 @@ function initTable() {
             field: 'user_name',
             title: '用户昵称',
             type: 'text',
-            disabled: false,
             editable: {
                 title: '输入用户昵称',
                 type: 'text',
