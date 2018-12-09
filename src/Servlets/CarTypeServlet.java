@@ -27,7 +27,7 @@ public class CarTypeServlet extends HttpServlet {
         ArrayList<CarType> list=new ArrayList<>();
         try {
             Connection conn= DatabaseInit.getConnection();
-            String sql="select * from car_rent.car_type order by car_name;";
+            String sql="select * from car.car_type order by car_name;";
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(sql);
 

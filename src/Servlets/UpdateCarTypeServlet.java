@@ -27,32 +27,16 @@ public class UpdateCarTypeServlet extends HttpServlet {
             String car_name = request.getParameter("car_name");
             String car_brand = request.getParameter("car_brand");
             String car_type = request.getParameter("car_type");
-            String daily_rent = request.getParameter("daily_rent");
-            String car_deposit = request.getParameter("car_deposit");
-
-            if (car_name.length() == 0) {
-                car_name = null;
-            }
-            if (car_brand.length() == 0) {
-                car_brand = null;
-            }
-            if (car_type.length() == 0) {
-                car_type = null;
-            }
-            if (daily_rent.length() == 0) {
-                daily_rent = null;
-            }
-            if (car_deposit.length() == 0) {
-                car_deposit = null;
-            }
+            float daily_rent = Float.parseFloat(request.getParameter("daily_rent"));
+            float car_deposit = Float.parseFloat(request.getParameter("car_deposit"));
 
             Connection conn = DatabaseInit.getConnection();
-            String sql = "update car_rent.car_type set car_brand = ?, car_type = ?, daily_rent = ?, car_deposit = ? where car_name = ?;";
+            String sql = "update car.car_type set car_brand = ?, car_type = ?, daily_rent = ?, car_deposit = ? where car_name = ?;";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, car_brand);
             ps.setString(2, car_type);
-            ps.setString(3, daily_rent);
-            ps.setString(4, car_deposit);
+            ps.setFloat(3, daily_rent);
+            ps.setFloat(4, car_deposit);
             ps.setString(5, car_name);
             ps.executeUpdate();
         } catch (Exception e) {

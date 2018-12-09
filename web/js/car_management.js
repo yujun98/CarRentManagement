@@ -101,10 +101,10 @@ function initTable() {
             }
         }, {
             field: 'car_name',
-            title: '车辆品牌名称',
+            title: '车辆名称',
             sortable: true,
             editable: {
-                title: '选择车辆品牌名称',
+                title: '选择车辆名称',
                 type: 'select',
                 source: function () {
                     var result = [];

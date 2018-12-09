@@ -4,270 +4,113 @@
     <meta charset="utf-8">
     <title>车辆类型管理</title>
     <link rel="stylesheet" href="css/html.css">
-    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script>
-        $(document).ready(function(){
-            $("#car_type_management").addClass('selected');
-            $('.managementDiv').hide();
-            showCarTypeInfo();
-            initAddCarTypeTable();
-            initSearchCarTypeTable();
-        });
-        function appendList(list, jsonObject) {
-            list.append("<tr>");
-            list.append("<td class='car_name'>" + jsonObject.car_name + "</td>");
-            list.append("<td class='car_brand' contentEditable='true'>" + jsonObject.car_brand + "</td>");
-            list.append("<td class='car_type' contentEditable='true'>" + jsonObject.car_type + "</td>");
-            list.append("<td class='daily_rent' contentEditable='true'>" + jsonObject.daily_rent+ "</td>");
-            list.append("<td class='car_deposit' contentEditable='true'>" + jsonObject.car_deposit + "</td>");
-            list.append("<td colspan='1'>" + "<input type='button' class='operation-button' onclick='deleteCarType(this)' value='删除'>" + "</td>");
-            list.append("<td colspan='1'>" + "<input type='button' class='operation-button' onclick='updateCarType(this)' value='更改'>" + "</td>");
-            list.append("</tr>");
-        }
-        function showCarTypeInfo(){
-            var tableHeader = "<table align=\"center\" class=\"info\">" +
-                "<tr>" +
-                "<th>汽车名称</th>" +
-                "<th>汽车品牌</th>" +
-                "<th>汽车类型</th>" +
-                "<th>日租金</th>" +
-                "<th>所需缴纳的押金</th>" +
-                "<th colspan='2'>操作</th>" +
-                "</tr>";
-            $.ajax({
-                type: "post",
-                url: "carTypeServlet",
-                dataType: "json",
-                success: function(json){
-                    var list = new StringBuffer();
-                    $.each(json, function (i, jsonObject) {
-                        appendList(list, jsonObject);
-                    });
-                    list.append("</table>");
-                    $(".infoDiv").html(tableHeader + list.toString());
-                }
-            });
-        }
-        function StringBuffer() {
-            this.__strings__ = [];
-        }
-        StringBuffer.prototype.append = function (str) {
-            this.__strings__.push(str);
-            return this;
-        };
-        StringBuffer.prototype.toString = function () {
-            return this.__strings__.join("");
-        };
-        function initAddCarTypeTable() {
-            var tableHeader = "<table align=\"center\" class=\"info\">" +
-                "<tr>" +
-                "<th>汽车名称</th>" +
-                "<th>汽车品牌</th>" +
-                "<th>汽车类型</th>" +
-                "<th>日租金</th>" +
-                "<th>所需缴纳的押金</th>" +
-                "</tr>";
-            var list = new StringBuffer();
-            list.append("<tr>");
-            list.append("<td>" + "<input type='text' id='add_car_name' class='add-input' placeholder='请输入汽车名称（必填）'>" + "</td>");
-            list.append("<td>" + "<input type='text' id='add_car_brand' class='add-input' placeholder='请输入汽车品牌（必填）'>" + "</td>");
-            list.append("<td>" + "<select id='add_car_type'>" + "<option value='' selected>请选择汽车类型</option>" + "<option value='经济型'>经济型</option>" + "<option value='商务型'>商务型</option>" + "<option value='豪华型'>豪华型</option>" + "</td>");
-            list.append("<td>" + "<input type='text' id='add_daily_rent' class='add-input' placeholder='请输入日租金（必填）'>" + "</td>");
-            list.append("<td>" + "<input type='text' id='add_car_deposit' class='add-input' placeholder='请输入所需缴纳的押金（必填）'>" + "</td>");
-            list.append("</tr>");
-            list.append("</table>");
-            list.append("<button class='button' onclick='addCarType()'>确认添加</button>");
-            list.append("<button class='button' onclick='managementHide()'>返回</button>");
-            $(".addManagement").html(tableHeader + list.toString());
-        }
-        function addCarType() {
-            var car_name = $("#add_car_name").val();
-            var car_brand = $("#add_car_brand").val();
-            var car_type = $("#add_car_type").val();
-            var daily_rent = $("#add_daily_rent").val();
-            var car_deposit = $("#add_car_deposit").val();
-            var data = {
-                "car_name": car_name,
-                "car_brand": car_brand,
-                "car_type": car_type,
-                "daily_rent": daily_rent,
-                "car_deposit": car_deposit
-            };
-            $.ajax({
-                type: "post",
-                url: "addCarTypeServlet",
-                data: data,
-                dataType: "json",
-                async: false,
-                success: function(json){
-                    if(parseInt(json.code) !== 0){
-                        alert("插入失败！可能已存在该条数据，或者您正在尝试插入非法的数据。");
-                    }
-                    else {
-                        alert("插入成功！");
-                    }
-                }
-            });
-            document.getElementById("add_car_name").value = "";
-            document.getElementById("add_car_brand").value = "";
-            document.getElementById("add_car_type").value = "";
-            document.getElementById("add_daily_rent").value = "";
-            document.getElementById("add_car_deposit").value = "";
-            showCarTypeInfo();
-        }
-        function initSearchCarTypeTable() {
-            var list = new StringBuffer();
-            list.append("<table>");
-            list.append("<td width='50%'>" + "<input type='text' id='search_car_name' class='search-input' placeholder='请输入要查找的汽车名称'>" + "</td>");
-            list.append("<td width='25%'>" + "<button class='button' onclick='searchCarType()'>确认</button>" + "</td>");
-            list.append("<td width='25%'>" + "<button class='button' onclick='managementHide();showCarTypeInfo()'>返回</button>" + "</td>");
-            list.append("</table>");
-            $(".searchManagement").html(list.toString());
-        }
-        function searchCarType() {
-            var tableHeader = "<table align=\"center\" class=\"info\">" +
-                "<tr>" +
-                "<th>汽车名称</th>" +
-                "<th>汽车品牌</th>" +
-                "<th>汽车类型</th>" +
-                "<th>日租金</th>" +
-                "<th>所需缴纳的押金</th>" +
-                "<th colspan='2'>操作</th>" +
-                "</tr>";
-            var car_name = $("#search_car_name").val();
-            var data = {
-                "car_name": car_name
-            };
-            $.ajax({
-                type: "post",
-                url: "searchCarTypeServlet",
-                data: data,
-                dataType: "json",
-                success: function(json){
-                    var list = new StringBuffer();
-                    $.each(json, function (i, jsonObject) {
-                        appendList(list, jsonObject);
-                    });
-                    list.append("</table>");
-                    $(".infoDiv").html(tableHeader + list.toString());
-                }
-            });
-            document.getElementById("search_car_name").value = "";
-        }
-        function deleteCarType(b) {
-            if(!confirm("确认要删除？")) {
-                window.event.returnValue = false;
-            }
-            else{
-                var tr = b.parentNode.parentNode;
-                var car_name = tr.getElementsByClassName("car_name")[0].textContent;
-                var data = {
-                    "car_name": car_name
-                };
-                $.ajax({
-                    type: "post",
-                    url: "deleteCarTypeServlet",
-                    data: data,
-                    dataType: "json",
-                    success: function(json){
-                        if(parseInt(json.code) === 1){
-                            alert("删除失败！");
-                        }
-                        else {
-                            alert("删除成功！");
-                            tr.remove();
-                        }
-                    }
-                });
-            }
-        }
-        function updateCarType(b) {
-            var tr = b.parentNode.parentNode;
-            var car_name = tr.getElementsByClassName("car_name")[0].textContent;
-            var car_brand = tr.getElementsByClassName("car_brand")[0].textContent;
-            var car_type = tr.getElementsByClassName("car_type")[0].textContent;
-            var daily_rent = tr.getElementsByClassName("daily_rent")[0].textContent;
-            var car_deposit = tr.getElementsByClassName("car_deposit")[0].textContent;
-            if (daily_rent < 0) {
-                alert("日租金不能小于0");
-                location.reload();
-            }
-            if (car_deposit < 0) {
-                alert("押金不能小于0");
-                location.reload();
-            }
-            else {
-                var data = {
-                    "car_name": car_name,
-                    "car_brand": car_brand,
-                    "car_type": car_type,
-                    "daily_rent": daily_rent,
-                    "car_deposit": car_deposit
-                };
-                $.ajax({
-                    type: "post",
-                    url: "updateCarTypeServlet",
-                    data: data,
-                    dataType: "json",
-                    async: false,
-                    success: function(json){
-                        if(parseInt(json.code) === 1){
-                            alert("更改失败！");
-                        }
-                        else {
-                            alert("更改成功！");
-                        }
-                    }
-                });
-            }
-        }
-        function managementHide() {
-            $('.managementDiv').hide();
-            $('.buttonSet').show()
-        }
-        function managementShow() {
-            $('.managementDiv').show();
-            $('.buttonSet').hide()
-        }
-    </script>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/bootstrap3-editable/css/bootstrap-editable.css">
+    <link rel="stylesheet" href="assets/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="assets/bootstrap-select/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="assets/bootstrap-validator/css/bootstrapValidator.min.css">
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/bootstrap-table/bootstrap-table.min.js"></script>
+    <script src="assets/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+    <script src="assets/bootstrap-table/extensions/editable/bootstrap-table-editable.min.js"></script>
+    <script src="assets/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+    <script src="assets/bootstrap-select/js/bootstrap-select.min.js"></script>
+    <script src="assets/bootstrap-select/js/i18n/defaults-zh_CN.min.js"></script>
+    <script src="assets/bootstrap-validator/js/bootstrapValidator.min.js"></script>
+    <script src="js/car_type_management.js"></script>
 </head>
-<body>
-<div class="root">
-    <header class="page-header">
-        <div class="container">
-            <div class="page-header-info">
-                <b><label>车辆类型管理</label></b>
+    <body>
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container navbar-left">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="index.html">“快租车”后台管理</a>
+            </div>
+            <div>
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="user_management.html">用户管理</a>
+                    </li>
+                    <li>
+                        <a href="car_management.html">车辆管理</a>
+                    </li>
+                    <li class="active">
+                        <a href="#">车辆类型管理</a>
+                    </li>
+                    <li>
+                        <a href="shop_management.html">服务点管理</a>
+                    </li>
+                    <li>
+                        <a href="order_management.html">订单管理</a>
+                    </li>
+                </ul>
             </div>
         </div>
-    </header>
+    </nav>
     <div class="page-wrapper">
         <div class="container">
-            <h2></h2>
-            <div class="col-list-1">
-                <a href="user_management.html" class="list-items" id="user_management">用户管理</a>
-                <a href="car_management.html" class="list-items" id="car_management">车辆管理</a>
-                <a href="car_type_management.html" class="list-items" id="car_type_management">车辆类型管理</a>
-                <a href="shop_management.html" class="list-items" id="shop_management">服务点管理</a>
-                <a href="order_management.html" class="list-items" id="order_management">订单管理</a>
-                <!--<a href="./bac_management.html" class="list-items" id="bac_management">违约记录管理</a>-->
-                <!--<a href="./peccancy_management.html" class="list-items" id="peccancy_management">违章记录管理</a>-->
-                <!--<a href="./accident_management.html" class="list-items" id="accident_management">事故记录管理</a>-->
+            <div align="center" class="infoDiv"></div>
+            <div id="toolbar">
+                <!--如果这里是表单的话，设置文本框监听回车键再按下回车键时会导致页面刷新-->
+                <input type="text" id="search_text" class="form-control" placeholder="请输入车辆编号" style="float: left;">
+                <input type="button" id="search_btn" class="btn btn-default" style="float: left; position: absolute;" value="搜索" onclick="searchCarType()">
+                <!--这里找不到好的方法可以使三个 input 处于同一行，只能通过 margin 来变通-->
+                <input type="button" class="btn btn-primary" data-toggle="modal" data-target="#add_modal" style="float: left; position:absolute; margin-left: 60px" value="添加车辆">
             </div>
-            <div class="col-info-9">
-                <div class="infoInterface">
-                    <div align="center" class="managementDiv">
-                        <div class="addManagement"></div>
-                        <div class="searchManagement"></div>
+            <div class="modal fade" id="add_modal" role="dialog" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="resetModal()">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel">添加车辆类型</h4>
+                        </div>
+                        <div id="add_car_type_form">
+                            <div class="form-horizontal modal-body">
+                                <div class="form-group">
+                                    <label for="add_car_name" class="col-sm-3 control-label">车辆名称</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" id="add_car_name" name="car_name" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add_car_brand" class="col-sm-3 control-label">品牌名称</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" id="add_car_brand" name="car_brand" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add_daily_rent" class="col-sm-3 control-label">日租金</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" id="add_daily_rent" name="daily_rent" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add_car_deposit" class="col-sm-3 control-label">所需押金</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" id="add_car_deposit" name="car_deposit" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add_car_type" class="col-sm-3 control-label">车类</label>
+                                    <div class="col-sm-7">
+                                        <select id="add_car_type" class="selectpicker show-tick form-control" data-live-search="true">
+                                            <option value="经济型" class="selected">经济型</option>
+                                            <option value="商务型">商务型</option>
+                                            <option value="豪华型">豪华型</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-default" data-dismiss="modal" onclick="resetModal()">取消</button>
+                                <button class="btn btn-primary" onclick="addCarType()">确认添加</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="buttonSet">
-                        <input type="button" class="button" onclick="managementShow();$('.addManagement').show();$('.searchManagement').hide()" value="添加汽车类型数据">
-                        <input type="button" class="button" onclick="managementShow();$('.addManagement').hide();$('.searchManagement').show()" value="查找汽车类型数据">
-                    </div>
-                    <div align="center" class="infoDiv"></div>
                 </div>
             </div>
+            <table id="car_type_info" class="table table-bordered tab-content" data-toolbar="#toolbar"></table>
         </div>
     </div>
-</div>
 </body>
 </html>

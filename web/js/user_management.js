@@ -141,7 +141,7 @@ function initTable() {
                     if (isNaN(v)) {
                         return '用户押金必须是数字';
                     }
-                    else if (parseInt(v) <= 0) {
+                    else if (parseInt(v-1) <= 0) {
                         return "用户押金不能小于0";
                     }
                 }
@@ -156,7 +156,7 @@ function initTable() {
                     if (isNaN(v)) {
                         return '用户余额必须是数字';
                     }
-                    else if (parseInt(v) < 0) {
+                    else if (parseInt(v-1) < 0) {
                         return "用户余额不能小于0";
                     }
                 }
@@ -249,7 +249,7 @@ function vadidateModal() {
                     },
                     regexp: {
                         regexp: /^[0-9]+$/,
-                        message: '用户手机号必须都为数字'
+                        message: '用户手机号格式不符'
                     }
                 }
             },
