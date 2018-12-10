@@ -27,7 +27,7 @@ public class ShopServlet extends HttpServlet {
         ArrayList<Shop> list=new ArrayList<>();
         try {
             Connection conn = DatabaseInit.getConnection();
-            String sql = "select * from car_rent.shop order by shop_number;";
+            String sql = "select * from car.shop order by shop_number;";
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(sql);
 
@@ -48,11 +48,11 @@ public class ShopServlet extends HttpServlet {
             Shop s = new Shop();
             s.setShop_number(rs.getString("shop_number"));
             s.setShop_city(rs.getString("shop_city"));
+            s.setShop_area(rs.getString("shop_area"));
             s.setShop_name(rs.getString("shop_name"));
             s.setShop_address(rs.getString("shop_address"));
             s.setShop_phone(rs.getString("shop_phone"));
             s.setShop_hours(rs.getString("shop_hours"));
-            s.setShop_area(rs.getString("shop_area"));
             list.add(s);
         }
     }

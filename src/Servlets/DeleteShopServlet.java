@@ -27,7 +27,7 @@ public class DeleteShopServlet extends HttpServlet {
             String shop_number = request.getParameter("shop_number");
 
             Connection conn = DatabaseInit.getConnection();
-            String sql = "delete from car_rent.shop where shop_number = ?;";
+            String sql = "delete from car.shop where shop_number = ?;";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, shop_number);
             ps.executeUpdate();

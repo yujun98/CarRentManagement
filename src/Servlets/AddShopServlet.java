@@ -33,30 +33,8 @@ public class AddShopServlet extends HttpServlet {
             String shop_phone = request.getParameter("shop_phone");
             String shop_hours = request.getParameter("shop_hours");
 
-            if (shop_number.length() == 0) {
-                shop_number = null;
-            }
-            if (shop_city.length() == 0) {
-                shop_city = null;
-            }
-            if (shop_area.length() == 0) {
-                shop_area = null;
-            }
-            if (shop_name.length() == 0) {
-                shop_name = null;
-            }
-            if (shop_address.length() == 0) {
-                shop_address = null;
-            }
-            if (shop_phone.length() == 0) {
-                shop_phone = null;
-            }
-            if (shop_hours.length() == 0) {
-                shop_hours = null;
-            }
-
             Connection conn = DatabaseInit.getConnection();
-            String sql = "insert into car_rent.shop(shop_number, shop_city, shop_area, shop_name, shop_address, shop_phone, shop_hours) values (?, ?, ?, ?, ?, ?, ?);";
+            String sql = "insert into car.shop(shop_number, shop_city, shop_area, shop_name, shop_address, shop_phone, shop_hours) values (?, ?, ?, ?, ?, ?, ?);";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, shop_number);
             ps.setString(2, shop_city);

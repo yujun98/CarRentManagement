@@ -52,10 +52,10 @@
             <div align="center" class="infoDiv"></div>
             <div id="toolbar">
                 <!--如果这里是表单的话，设置文本框监听回车键再按下回车键时会导致页面刷新-->
-                <input type="text" id="search_text" class="form-control" placeholder="请输入车辆编号" style="float: left;">
+                <input type="text" id="search_text" class="form-control" placeholder="请输入车辆名称" style="float: left;">
                 <input type="button" id="search_btn" class="btn btn-default" style="float: left; position: absolute;" value="搜索" onclick="searchCarType()">
                 <!--这里找不到好的方法可以使三个 input 处于同一行，只能通过 margin 来变通-->
-                <input type="button" class="btn btn-primary" data-toggle="modal" data-target="#add_modal" style="float: left; position:absolute; margin-left: 60px" value="添加车辆">
+                <input type="button" class="btn btn-primary" data-toggle="modal" data-target="#add_modal" style="float: left; position:absolute; margin-left: 60px" value="添加车辆类型">
             </div>
             <div class="modal fade" id="add_modal" role="dialog" aria-hidden="true">
                 <div class="modal-dialog">

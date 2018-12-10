@@ -4,280 +4,118 @@
     <meta charset="utf-8">
     <title>服务点管理</title>
     <link rel="stylesheet" href="css/html.css">
-    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script>
-        $(document).ready(function(){
-            $("#shop_management").addClass('selected');
-            $('.managementDiv').hide();
-            showShopInfo();
-            initAddShopTable();
-            initSearchShopTable();
-        });
-        function appendList(list, jsonObject) {
-            list.append("<tr>");
-            list.append("<td class='shop_number'>" + jsonObject.shop_number + "</td>");
-            list.append("<td class='shop_city' contentEditable='true'>" + jsonObject.shop_city + "</td>");
-            list.append("<td class='shop_area' contentEditable='true'>" + jsonObject.shop_area + "</td>");
-            list.append("<td class='shop_name' contentEditable='true'>" + jsonObject.shop_name + "</td>");
-            list.append("<td class='shop_address' contentEditable='true'>" + jsonObject.shop_address + "</td>");
-            list.append("<td class='shop_phone' contentEditable='true'>" + jsonObject.shop_phone + "</td>");
-            list.append("<td class='shop_hours' contentEditable='true'>" + jsonObject.shop_hours + "</td>");
-            list.append("<td colspan='1'>" + "<input type='button' class='operation-button' onclick='deleteShop(this)' value='删除'>" + "</td>");
-            list.append("<td colspan='1'>" + "<input type='button' class='operation-button' onclick='updateShop(this)' value='更改'>" + "</td>");
-            list.append("</tr>");
-        }
-        function showShopInfo(){
-            var tableHeader = "<table align=\"center\" class=\"info\">" +
-                "<tr>" +
-                "<th>服务点编号</th>" +
-                "<th>服务点所在城市</th>" +
-                "<th>服务区</th>" +
-                "<th>服务点名称</th>" +
-                "<th>服务点地址</th>" +
-                "<th>服务点联系电话</th>" +
-                "<th>服务点营业时间</th>" +
-                "<th colspan='2'>操作</th>" +
-                "</tr>";
-            $.ajax({
-                type: "post",
-                url: "shopServlet",
-                dataType: "json",
-                success: function(json){
-                    var list = new StringBuffer();
-                    $.each(json, function (i, jsonObject) {
-                        appendList(list, jsonObject);
-                    });
-                    list.append("</table>");
-                    $(".infoDiv").html(tableHeader + list.toString());
-                }
-            });
-        }
-        function StringBuffer() {
-            this.__strings__ = [];
-        }
-        StringBuffer.prototype.append = function (str) {
-            this.__strings__.push(str);
-            return this;
-        };
-        StringBuffer.prototype.toString = function () {
-            return this.__strings__.join("");
-        };
-        function initAddShopTable() {
-            var tableHeader = "<table align=\"center\" class=\"info\">" +
-                "<tr>" +
-                "<th>服务点编号</th>" +
-                "<th>服务点所在城市</th>" +
-                "<th>服务区</th>" +
-                "<th>服务点名称</th>" +
-                "<th>服务点地址</th>" +
-                "<th>服务点联系电话</th>" +
-                "<th>服务点营业时间</th>" +
-                "</tr>";
-            var list = new StringBuffer();
-            list.append("<tr>");
-            list.append("<td>" + "<input type='text' id='add_shop_number' class='add-input' placeholder='请输入服务点编号（必填）'>" + "</td>");
-            list.append("<td>" + "<input type='text' id='add_shop_city' class='add-input' placeholder='请输入服务点所在城市（必填）'>" + "</td>");
-            list.append("<td>" + "<input type='text' id='add_shop_area' class='add-input' placeholder='请输入服务区（必填）'>" + "</td>");
-            list.append("<td>" + "<input type='text' id='add_shop_name' class='add-input' placeholder='请输入服务点名称（必填）'>" + "</td>");
-            list.append("<td>" + "<input type='text' id='add_shop_address' class='add-input' placeholder='请输入服务点地址（必填）'>" + "</td>");
-            list.append("<td>" + "<input type='text' id='add_shop_phone' class='add-input' placeholder='请输入服务点联系电话（必填）'>" + "</td>");
-            list.append("<td>" + "<input type='text' id='add_shop_hours' class='add-input' placeholder='请输入服务点营业时间（必填）'>" + "</td>");
-            list.append("</tr>");
-            list.append("</table>");
-            list.append("<button class='button' onclick='addShop()'>确认添加</button>");
-            list.append("<button class='button' onclick='managementHide()'>返回</button>");
-            $(".addManagement").html(tableHeader + list.toString());
-        }
-        function addShop() {
-            var shop_number = $("#add_shop_number").val();
-            var shop_city = $("#add_shop_city").val();
-            var shop_area = $("#add_shop_area").val();
-            var shop_name = $("#add_shop_name").val();
-            var shop_address = $("#add_shop_address").val();
-            var shop_phone = $("#add_shop_phone").val();
-            var shop_hours = $("#add_shop_hours").val();
-            var data = {
-                "shop_number": shop_number,
-                "shop_city": shop_city,
-                "shop_area": shop_area,
-                "shop_name": shop_name,
-                "shop_address": shop_address,
-                "shop_phone": shop_phone,
-                "shop_hours": shop_hours
-            };
-            $.ajax({
-                type: "post",
-                url: "addShopServlet",
-                data: data,
-                dataType: "json",
-                async: false,
-                success: function(json){
-                    if(parseInt(json.code) !== 0){
-                        alert("插入失败！可能已存在该条数据，或者您正在尝试插入非法的数据。");
-                    }
-                    else {
-                        alert("插入成功！");
-                    }
-                }
-            });
-            document.getElementById("add_shop_number").value = "";
-            document.getElementById("add_shop_city").value = "";
-            document.getElementById("add_shop_area").value = "";
-            document.getElementById("add_shop_name").value = "";
-            document.getElementById("add_shop_address").value = "";
-            document.getElementById("add_shop_phone").value = "";
-            document.getElementById("add_shop_hours").value = "";
-            showShopInfo();
-        }
-        function initSearchShopTable() {
-            var list = new StringBuffer();
-            list.append("<table>");
-            list.append("<td width='50%'>" + "<input type='text' id='search_shop_number' class='search-input' placeholder='请输入要查找的服务点编号'>" + "</td>");
-            list.append("<td width='25%'>" + "<button class='button' onclick='searchShop()'>确认</button>" + "</td>");
-            list.append("<td width='25%'>" + "<button class='button' onclick='managementHide();showShopInfo()'>返回</button>" + "</td>");
-            list.append("</table>");
-            $(".searchManagement").html(list.toString());
-        }
-        function searchShop() {
-            var tableHeader = "<table align=\"center\" class=\"info\">" +
-                "<tr>" +
-                "<th>服务点编号</th>" +
-                "<th>服务点所在城市</th>" +
-                "<th>服务区</th>" +
-                "<th>服务点名称</th>" +
-                "<th>服务点地址</th>" +
-                "<th>服务点联系电话</th>" +
-                "<th>服务点营业时间</th>" +
-                "<th colspan='2'>操作</th>" +
-                "</tr>";
-            var shop_number = $("#search_shop_number").val();
-            var data = {
-                "shop_number": shop_number
-            };
-            $.ajax({
-                type: "post",
-                url: "searchShopServlet",
-                data: data,
-                dataType: "json",
-                success: function(json){
-                    var list = new StringBuffer();
-                    $.each(json, function (i, jsonObject) {
-                        appendList(list, jsonObject);
-                    });
-                    list.append("</table>");
-                    $(".infoDiv").html(tableHeader + list.toString());
-                }
-            });
-            document.getElementById("search_shop_number").value = "";
-        }
-        function deleteShop(b) {
-            if(!confirm("确认要删除？")) {
-                window.event.returnValue = false;
-            }
-            else{
-                var tr = b.parentNode.parentNode;
-                var shop_number = tr.getElementsByClassName("shop_number")[0].textContent;
-                var data = {
-                    "shop_number": shop_number
-                };
-                $.ajax({
-                    type: "post",
-                    url: "deleteShopServlet",
-                    data: data,
-                    dataType: "json",
-                    success: function(json){
-                        if(parseInt(json.code) === 1){
-                            alert("删除失败！");
-                        }
-                        else {
-                            alert("删除成功！");
-                            tr.remove();
-                        }
-                    }
-                });
-            }
-        }
-        function updateShop(b) {
-            var tr = b.parentNode.parentNode;
-            var shop_number = tr.getElementsByClassName("shop_number")[0].textContent;
-            var shop_city = tr.getElementsByClassName("shop_city")[0].textContent;
-            var shop_area = tr.getElementsByClassName("shop_area")[0].textContent;
-            var shop_name = tr.getElementsByClassName("shop_name")[0].textContent;
-            var shop_address = tr.getElementsByClassName("shop_address")[0].textContent;
-            var shop_phone = tr.getElementsByClassName("shop_phone")[0].textContent;
-            var shop_hours = tr.getElementsByClassName("shop_hours")[0].textContent;
-            var data = {
-                "shop_number": shop_number,
-                "shop_city": shop_city,
-                "shop_area": shop_area,
-                "shop_name": shop_name,
-                "shop_address": shop_address,
-                "shop_phone": shop_phone,
-                "shop_hours": shop_hours
-            };
-            $.ajax({
-                type: "post",
-                url: "updateShopServlet",
-                data: data,
-                dataType: "json",
-                async: false,
-                success: function(json){
-                    if(parseInt(json.code) === 1){
-                        alert("更改失败！");
-                    }
-                    else {
-                        alert("更改成功！");
-                    }
-                }
-            });
-        }
-        function managementHide() {
-            $('.managementDiv').hide();
-            $('.buttonSet').show()
-        }
-        function managementShow() {
-            $('.managementDiv').show();
-            $('.buttonSet').hide()
-        }
-    </script>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/bootstrap3-editable/css/bootstrap-editable.css">
+    <link rel="stylesheet" href="assets/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="assets/bootstrap-validator/css/bootstrapValidator.min.css">
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/bootstrap-table/bootstrap-table.min.js"></script>
+    <script src="assets/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+    <script src="assets/bootstrap-table/extensions/editable/bootstrap-table-editable.min.js"></script>
+    <script src="assets/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+    <script src="assets/bootstrap-validator/js/bootstrapValidator.min.js"></script>
+    <script src="js/shop_management.js"></script>
 </head>
 <body>
-<div class="root">
-    <header class="page-header">
-        <div class="container">
-            <div class="page-header-info">
-                <b><label>服务点管理</label></b>
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container navbar-left">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="index.html">“快租车”后台管理</a>
+            </div>
+            <div>
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="user_management.html">用户管理</a>
+                    </li>
+                    <li>
+                        <a href="car_management.html">车辆管理</a>
+                    </li>
+                    <li>
+                        <a href="car_type_management.html">车辆类型管理</a>
+                    </li>
+                    <li class="active">
+                        <a href="#">服务点管理</a>
+                    </li>
+                    <li>
+                        <a href="order_management.html">订单管理</a>
+                    </li>
+                </ul>
             </div>
         </div>
-    </header>
+    </nav>
     <div class="page-wrapper">
         <div class="container">
-            <h2></h2>
-            <div class="col-list-1">
-                <a href="user_management.html" class="list-items" id="user_management">用户管理</a>
-                <a href="car_management.html" class="list-items" id="car_management">车辆管理</a>
-                <a href="car_type_management.html" class="list-items" id="car_type_management">车辆类型管理</a>
-                <a href="shop_management.html" class="list-items" id="shop_management">服务点管理</a>
-                <a href="order_management.html" class="list-items" id="order_management">订单管理</a>
-                <!--<a href="./bac_management.html" class="list-items" id="bac_management">违约记录管理</a>-->
-                <!--<a href="./peccancy_management.html" class="list-items" id="peccancy_management">违章记录管理</a>-->
-                <!--<a href="./accident_management.html" class="list-items" id="accident_management">事故记录管理</a>-->
+            <div align="center" class="infoDiv"></div>
+            <div id="toolbar">
+                <!--如果这里是表单的话，设置文本框监听回车键再按下回车键时会导致页面刷新-->
+                <input type="text" id="search_text" class="form-control" placeholder="请输入服务点编号" style="float: left;">
+                <input type="button" id="search_btn" class="btn btn-default" style="float: left; position: absolute;" value="搜索" onclick="searchShop()">
+                <!--这里找不到好的方法可以使三个 input 处于同一行，只能通过 margin 来变通-->
+                <input type="button" class="btn btn-primary" data-toggle="modal" data-target="#add_modal" style="float: left; position:absolute; margin-left: 60px" value="添加服务点">
             </div>
-            <div class="col-info-9">
-                <div class="infoInterface">
-                    <div align="center" class="managementDiv">
-                        <div class="addManagement"></div>
-                        <div class="searchManagement"></div>
+            <div class="modal fade" id="add_modal" role="dialog" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="resetModal()">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel">添加服务点</h4>
+                        </div>
+                        <div id="add_shop_form">
+                            <div class="form-horizontal modal-body">
+                                <div class="form-group">
+                                    <label for="add_shop_number" class="col-sm-3 control-label">服务点编号</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" id="add_shop_number" name="shop_number" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add_shop_name" class="col-sm-3 control-label">服务点名称</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" id="add_shop_name" name="shop_name" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add_shop_city" class="col-sm-3 control-label">所在城市</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" id="add_shop_city" name="shop_city" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add_shop_area" class="col-sm-3 control-label">所在区域</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" id="add_shop_area" name="shop_area" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add_shop_address" class="col-sm-3 control-label">详细地址</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" id="add_shop_address" name="shop_address" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add_shop_phone" class="col-sm-3 control-label">联系电话</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" id="add_shop_phone" name="shop_phone" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add_shop_hours" class="col-sm-3 control-label">营业时间</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" id="add_shop_hours" name="shop_hours" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-default" data-dismiss="modal" onclick="resetModal()">取消</button>
+                                <button class="btn btn-primary" onclick="addShop()">确认添加</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="buttonSet">
-                        <input type="button" class="button" onclick="managementShow();$('.addManagement').show();$('.searchManagement').hide()" value="添加服务点数据">
-                        <input type="button" class="button" onclick="managementShow();$('.addManagement').hide();$('.searchManagement').show()" value="查找服务点数据">
-                    </div>
-                    <div align="center" class="infoDiv"></div>
                 </div>
             </div>
+            <table id="shop_info" class="table table-bordered tab-content" data-toolbar="#toolbar"></table>
         </div>
     </div>
-</div>
 </body>
 </html>
