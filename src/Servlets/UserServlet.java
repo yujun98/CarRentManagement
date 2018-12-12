@@ -24,7 +24,7 @@ public class UserServlet extends HttpServlet {
         response.setContentType("text/html;charset=utf-8");
         response.setCharacterEncoding("utf-8");
 
-        ArrayList<User> list=new ArrayList<>();
+        ArrayList<User> list = new ArrayList<>();
         try {
             Connection conn = DatabaseInit.getConnection();
             String sql = "select * from car.user order by user_phone;";

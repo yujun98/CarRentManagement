@@ -222,4 +222,44 @@
         <servlet-name>searchShopServlet</servlet-name>
         <url-pattern>/searchShopServlet</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>bacServlet</servlet-name>
+        <servlet-class>Servlets.BacServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>bacServlet</servlet-name>
+        <url-pattern>/bacServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>addBacServlet</servlet-name>
+        <servlet-class>Servlets.AddBacServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>addBacServlet</servlet-name>
+        <url-pattern>/addBacServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>deleteBacServlet</servlet-name>
+        <servlet-class>Servlets.DeleteBacServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>deleteBacServlet</servlet-name>
+        <url-pattern>/deleteBacServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>updateBacServlet</servlet-name>
+        <servlet-class>Servlets.UpdateBacServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>updateBacServlet</servlet-name>
+        <url-pattern>/updateBacServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>searchBacServlet</servlet-name>
+        <servlet-class>Servlets.SearchBacServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>searchBacServlet</servlet-name>
+        <url-pattern>/searchBacServlet</url-pattern>
+    </servlet-mapping>
 </web-app>

@@ -1,7 +1,7 @@
 package Servlets;
 
+import Classes.Bac;
 import Classes.DatabaseInit;
-import Classes.Order;
 import net.sf.json.JSONArray;
 
 import javax.servlet.http.HttpServlet;
@@ -15,7 +15,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-public class OrderServlet extends HttpServlet {
+public class BacServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         doPost(request, response);
     }
@@ -24,10 +24,10 @@ public class OrderServlet extends HttpServlet {
         response.setContentType("text/html;charset=utf-8");
         response.setCharacterEncoding("utf-8");
 
-        ArrayList<Order> list = new ArrayList<>();
+        ArrayList<Bac> list = new ArrayList<>();
         try {
             Connection conn = DatabaseInit.getConnection();
-            String sql = "select * from car.order_info order by order_number;";
+            String sql = "select * from car.bac order by order_number;";
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(sql);
 
@@ -42,24 +42,14 @@ public class OrderServlet extends HttpServlet {
         out.close();
     }
 
-    static void getList(ArrayList<Order> list, ResultSet rs) throws SQLException {
+    static void getList(ArrayList<Bac> list, ResultSet rs) throws SQLException {
         while(rs.next())
         {
-            Order o = new Order();
-            o.setOrder_number(rs.getString("order_number"));
-            o.setUser_phone(rs.getString("user_phone"));
-            o.setCar_number(rs.getString("car_number"));
-            o.setTake_shop(rs.getString("take_shop"));
-            o.setReturn_shop(rs.getString("return_shop"));
-            o.setTake_time(rs.getString("take_time"));
-            o.setReturn_time(rs.getString("return_time"));
-            o.setOrder_amount(rs.getInt("order_amount"));
-            o.setOrder_state(rs.getString("order_state"));
-            o.setTake_oil(rs.getInt("take_oil"));
-            o.setReturn_oil(rs.getInt("return_oil"));
-            o.setOil_amount(rs.getInt("oil_amount"));
-            o.setOrder_time(rs.getString("order_time"));
-            list.add(o);
+            Bac b = new Bac();
+            b.setOrder_number(rs.getString("order_number"));
+            b.setAmount(Float.parseFloat(rs.getString("amount")));
+            b.setType(rs.getString("type"));
+            list.add(b);
         }
     }
 }

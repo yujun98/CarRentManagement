@@ -24,10 +24,10 @@ public class CarServlet extends HttpServlet {
         response.setContentType("text/html;charset=utf-8");
         response.setCharacterEncoding("utf-8");
 
-        ArrayList<Car> list=new ArrayList<>();
+        ArrayList<Car> list = new ArrayList<>();
         try {
-            Connection conn= DatabaseInit.getConnection();
-            String sql="select * from car.car order by car_number;";
+            Connection conn = DatabaseInit.getConnection();
+            String sql = "select * from car.car order by car_number;";
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(sql);
 
