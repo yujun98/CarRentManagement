@@ -20,11 +20,11 @@ public class Order {
     //订单状态
     private String order_state;
     //取车前剩余油量
-    private int take_oil;
+    private float take_oil;
     //还车后剩余油量
-    private int return_oil;
+    private float return_oil;
     //油量补偿花费
-    private int oil_amount;
+    private float oil_amount;
     //下订单时间
     private String order_time;
 
@@ -55,13 +55,13 @@ public class Order {
     public void setOrder_state(String order_state) {
         this.order_state = order_state;
     }
-    public void setTake_oil(int take_oil) {
+    public void setTake_oil(float take_oil) {
         this.take_oil = take_oil;
     }
-    public void setReturn_oil(int return_oil) {
+    public void setReturn_oil(float return_oil) {
         this.return_oil = return_oil;
     }
-    public void setOil_amount(int oil_amount) {
+    public void setOil_amount(float oil_amount) {
         this.oil_amount = oil_amount;
     }
     public void setOrder_time(String order_time) {
@@ -95,13 +95,13 @@ public class Order {
     public String getOrder_state() {
         return order_state;
     }
-    public int getTake_oil() {
+    public float getTake_oil() {
         return take_oil;
     }
-    public int getReturn_oil() {
+    public float getReturn_oil() {
         return return_oil;
     }
-    public int getOil_amount() {
+    public float getOil_amount() {
         return oil_amount;
     }
     public String getOrder_time() {

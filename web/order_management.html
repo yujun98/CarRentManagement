@@ -4,366 +4,159 @@
     <meta charset="utf-8">
     <title>订单管理</title>
     <link rel="stylesheet" href="css/html.css">
-    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script>
-        $(document).ready(function(){
-            $("#order_management").addClass('selected');
-            $('.managementDiv').hide();
-            showOrderInfo();
-            initAddOrderTable();
-            initSearchOrderTable();
-        });
-        function appendList(list, jsonObject) {
-            list.append("<tr>");
-            list.append("<td class='order_number'>" + jsonObject.order_number + "</td>");
-            list.append("<td class='user_phone' contentEditable='true'>" + jsonObject.user_phone + "</td>");
-            list.append("<td class='car_number' contentEditable='true'>" + jsonObject.car_number + "</td>");
-            list.append("<td class='take_shop' contentEditable='true'>" + jsonObject.take_shop + "</td>");
-            list.append("<td class='return_shop' contentEditable='true'>" + jsonObject.return_shop + "</td>");
-            list.append("<td class='take_time' contentEditable='true'>" + jsonObject.take_time + "</td>");
-            list.append("<td class='return_time' contentEditable='true'>" + jsonObject.return_time + "</td>");
-            list.append("<td class='order_amount' contentEditable='true'>" + jsonObject.order_amount + "</td>");
-            list.append("<td class='order_state' contentEditable='true'>" + jsonObject.order_state + "</td>");
-            list.append("<td class='take_oil' contentEditable='true'>" + jsonObject.take_oil + "</td>");
-            list.append("<td class='return_oil' contentEditable='true'>" + jsonObject.return_oil + "</td>");
-            list.append("<td class='oil_amount' contentEditable='true'>" + jsonObject.oil_amount + "</td>");
-            list.append("<td class='order_time' contentEditable='true'>" + jsonObject.order_time + "</td>");
-            list.append("<td colspan='1'>" + "<input type='button' class='operation-button' onclick='deleteOrder(this)' value='删除'>" + "</td>");
-            list.append("<td colspan='1'>" + "<input type='button' class='operation-button' onclick='updateOrder(this)' value='更改'>" + "</td>");
-            list.append("</tr>");
-        }
-        function showOrderInfo(){
-            var tableHeader = "<table align=\"center\" class=\"info\">" +
-                "<tr>" +
-                "<th>订单编号</th>" +
-                "<th>用户手机号</th>" +
-                "<th>汽车编号</th>" +
-                "<th>取车服务点编号</th>" +
-                "<th>还车服务点编号</th>" +
-                "<th>取车时间</th>" +
-                "<th>还车时间</th>" +
-                "<th>订单金额</th>" +
-                "<th>订单状态</th>" +
-                "<th>取车时剩余油量</th>" +
-                "<th>还车时剩余油量</th>" +
-                "<th>油量补偿花费</th>" +
-                "<th>下订单时间</th>" +
-                "<th colspan='2'>操作</th>" +
-                "</tr>";
-            $.ajax({
-                type: "post",
-                url: "orderServlet",
-                dataType: "json",
-                success: function(json){
-                    var list = new StringBuffer();
-                    $.each(json, function (i, jsonObject) {
-                        appendList(list, jsonObject);
-                    });
-                    list.append("</table>");
-                    $(".infoDiv").html(tableHeader + list.toString());
-                }
-            });
-        }
-        function StringBuffer() {
-            this.__strings__ = [];
-        }
-        StringBuffer.prototype.append = function (str) {
-            this.__strings__.push(str);
-            return this;
-        };
-        StringBuffer.prototype.toString = function () {
-            return this.__strings__.join("");
-        };
-        function initAddOrderTable() {
-            var tableHeader = "<table align=\"center\" class=\"info\">" +
-                "<tr>" +
-                "<th>订单编号</th>" +
-                "<th>用户手机号</th>" +
-                "<th>汽车编号</th>" +
-                "<th>取车服务点编号</th>" +
-                "<th>还车服务点编号</th>" +
-                "<th>取车时间</th>" +
-                "<th>还车时间</th>" +
-                "<th>订单金额</th>" +
-                "<th>订单状态</th>" +
-                "<th>取车时剩余油量</th>" +
-                "<th>还车时剩余油量</th>" +
-                "<th>油量补偿花费</th>" +
-                "<th>下订单时间</th>" +
-                "</tr>";
-            var list = new StringBuffer();
-            list.append("<tr>");
-            list.append("<td>" + "<input type='text' id='add_order_number' class='add-input' placeholder='请输入订单编号（必填）'>" + "</td>");
-            list.append("<td>" + "<input type='text' id='add_user_phone' class='add-input' placeholder='请输入用户编号（必填）'>" + "</td>");
-            list.append("<td>" + "<input type='text' id='add_car_number' class='add-input' placeholder='请输入汽车编号（必填）'>" + "</td>");
-            list.append("<td>" + "<input type='text' id='add_take_shop' class='add-input' placeholder='请输入取车服务点编号'>" + "</td>");
-            list.append("<td>" + "<input type='text' id='add_return_shop' class='add-input' placeholder='请输入还车服务点编号'>" + "</td>");
-            list.append("<td>" + "<input type='text' id='add_take_time' class='add-input' placeholder='请输入取车时间（必填）'>" + "</td>");
-            list.append("<td>" + "<input type='text' id='add_return_time' class='add-input' placeholder='请输入还车时间（必填）'>" + "</td>");
-            list.append("<td>" + "<input type='text' id='add_order_amount' class='add-input' placeholder='请输入订单金额'>" + "</td>");
-            list.append("<td>" + "<select id='add_order_state'>" + "<option value='' selected>请选择订单状态</option>" + "<option value='未取车'>未取车</option>" + "<option value='未还车'>未还车</option>" + "<option value='已还车'>已还车</option>" + "<option value='已完成'>已完成</option>" + "<option value='已取消'>已取消</option>" + "<option value='已延长'>已延长</option>" + "</td>");
-            list.append("<td>" + "<input type='text' id='add_take_oil' class='add-input' placeholder='请输入取车时剩余油量'>" + "</td>");
-            list.append("<td>" + "<input type='text' id='add_return_oil' class='add-input' placeholder='请输入还车时剩余油量'>" + "</td>");
-            list.append("<td>" + "<input type='text' id='add_oil_amount' class='add-input' placeholder='请输入油量补偿花费'>" + "</td>");
-            list.append("<td>" + "<input type='text' id='add_order_time' class='add-input' placeholder='请输入下订单时间（必填）'>" + "</td>");
-            list.append("</tr>");
-            list.append("</table>");
-            list.append("<button class='button' onclick='addOrder()'>确认添加</button>");
-            list.append("<button class='button' onclick='managementHide()'>返回</button>");
-            $(".addManagement").html(tableHeader + list.toString());
-        }
-        function addOrder() {
-            var order_number = $("#add_order_number").val();
-            var user_phone = $("#add_user_phone").val();
-            var car_number = $("#add_car_number").val();
-            var take_shop = $("#add_take_shop").val();
-            var return_shop = $("#add_return_shop").val();
-            var take_time = $("#add_take_time").val();
-            var return_time = $("#add_return_time").val();
-            var order_amount = $("#add_order_amount").val();
-            var order_state = $("#add_order_state").val();
-            var take_oil = $("#add_take_oil").val();
-            var return_oil = $("#add_return_oil").val();
-            var oil_amount = $("#add_oil_amount").val();
-            var order_time = $("#add_order_time").val();
-            if (order_amount < 0) {
-                alert("订单金额不能小于0");
-            }
-            if (take_oil < 0) {
-                alert("取车时剩余油量不能小于0");
-            }
-            if (return_oil < 0) {
-                alert("还车时剩余油量不能小于0");
-            }
-            else {
-                var data = {
-                    "order_number": order_number,
-                    "user_phone": user_phone,
-                    "car_number": car_number,
-                    "take_shop": take_shop,
-                    "return_shop": return_shop,
-                    "take_time": take_time,
-                    "return_time": return_time,
-                    "order_amount": order_amount,
-                    "order_state": order_state,
-                    "take_oil": take_oil,
-                    "return_oil": return_oil,
-                    "oil_amount": oil_amount,
-                    "order_time": order_time,
-                };
-                $.ajax({
-                    type: "post",
-                    url: "addOrderServlet",
-                    data: data,
-                    dataType: "json",
-                    async: false,
-                    success: function(json){
-                        if(parseInt(json.code) !== 0){
-                            alert("插入失败！可能已存在该条数据，或者您正在尝试插入非法的数据。");
-                        }
-                        else {
-                            alert("插入成功！");
-                        }
-                    }
-                });
-            }
-            document.getElementById("add_order_number").value = "";
-            document.getElementById("add_user_phone").value = "";
-            document.getElementById("add_car_number").value = "";
-            document.getElementById("add_take_shop").value = "";
-            document.getElementById("add_return_shop").value = "";
-            document.getElementById("add_take_time").value = "";
-            document.getElementById("add_return_time").value = "";
-            document.getElementById("add_order_amount").value = "";
-            document.getElementById("add_order_state").value = "";
-            document.getElementById("add_take_oil").value = "";
-            document.getElementById("add_return_oil").value = "";
-            document.getElementById("add_oil_amount").value = "";
-            document.getElementById("add_order_time").value = "";
-            showOrderInfo();
-        }
-        function initSearchOrderTable() {
-            var list = new StringBuffer();
-            list.append("<table>");
-            list.append("<td width='50%'>" + "<input type='text' id='search_order_number' class='search-input' placeholder='请输入要查找的订单编号'>" + "</td>");
-            list.append("<td width='25%'>" + "<button class='button' onclick='searchOrder()'>确认</button>" + "</td>");
-            list.append("<td width='25%'>" + "<button class='button' onclick='managementHide();showOrderInfo()'>返回</button>" + "</td>");
-            list.append("</table>");
-            $(".searchManagement").html(list.toString());
-        }
-        function searchOrder() {
-            var tableHeader = "<table align=\"center\" class=\"info\">" +
-                "<tr>" +
-                "<th>订单编号</th>" +
-                "<th>用户手机号</th>" +
-                "<th>汽车编号</th>" +
-                "<th>取车服务点编号</th>" +
-                "<th>还车服务点编号</th>" +
-                "<th>取车时间</th>" +
-                "<th>还车时间</th>" +
-                "<th>订单金额</th>" +
-                "<th>订单状态</th>" +
-                "<th>取车时剩余油量</th>" +
-                "<th>还车时剩余油量</th>" +
-                "<th>油量补偿花费</th>" +
-                "<th>下订单时间</th>" +
-                "<th colspan='2'>操作</th>" +
-                "</tr>";
-            var order_number = $("#search_order_number").val();
-            var data = {
-                "order_number": order_number
-            };
-            $.ajax({
-                type: "post",
-                url: "searchOrderServlet",
-                data: data,
-                dataType: "json",
-                success: function(json){
-                    var list = new StringBuffer();
-                    $.each(json, function (i, jsonObject) {
-                        appendList(list, jsonObject);
-                    });
-                    list.append("</table>");
-                    $(".infoDiv").html(tableHeader + list.toString());
-                }
-            });
-            document.getElementById("search_order_number").value = "";
-        }
-        function deleteOrder(b) {
-            if(!confirm("确认要删除？")) {
-                window.event.returnValue = false;
-            }
-            else{
-                var tr = b.parentNode.parentNode;
-                var order_number = tr.getElementsByClassName("order_number")[0].textContent;
-                var data = {
-                    "order_number": order_number
-                };
-                $.ajax({
-                    type: "post",
-                    url: "deleteOrderServlet",
-                    data: data,
-                    dataType: "json",
-                    success: function(json){
-                        if(parseInt(json.code) === 1){
-                            alert("删除失败！");
-                        }
-                        else {
-                            alert("删除成功！");
-                            tr.remove();
-                        }
-                    }
-                });
-            }
-        }
-        function updateOrder(b) {
-            var tr = b.parentNode.parentNode;
-            var order_number = tr.getElementsByClassName("order_number")[0].textContent;
-            var user_phone = tr.getElementsByClassName("user_phone")[0].textContent;
-            var car_number = tr.getElementsByClassName("car_number")[0].textContent;
-            var take_shop = tr.getElementsByClassName("take_shop")[0].textContent;
-            var return_shop = tr.getElementsByClassName("return_shop")[0].textContent;
-            var take_time = tr.getElementsByClassName("take_time")[0].textContent;
-            var return_time = tr.getElementsByClassName("return_time")[0].textContent;
-            var order_amount = tr.getElementsByClassName("order_amount")[0].textContent;
-            var order_state = tr.getElementsByClassName("order_state")[0].textContent;
-            var take_oil = tr.getElementsByClassName("take_oil")[0].textContent;
-            var return_oil = tr.getElementsByClassName("return_oil")[0].textContent;
-            var oil_amount = tr.getElementsByClassName("oil_amount")[0].textContent;
-            var order_time = tr.getElementsByClassName("order_time")[0].textContent;
-            if (order_amount < 0) {
-                alert("订单金额不能小于0");
-                location.reload();
-            }
-            if (take_oil < 0) {
-                alert("取车时剩余油量不能小于0");
-                location.reload();
-            }
-            if (return_oil < 0) {
-                alert("还车时剩余油量不能小于0");
-                location.reload();
-            }
-            else {
-                var data = {
-                    "order_number": order_number,
-                    "user_phone": user_phone,
-                    "car_number": car_number,
-                    "take_shop": take_shop,
-                    "return_shop": return_shop,
-                    "take_time": take_time,
-                    "return_time": return_time,
-                    "order_amount": order_amount,
-                    "order_state": order_state,
-                    "take_oil": take_oil,
-                    "return_oil": return_oil,
-                    "oil_amount": oil_amount,
-                    "order_time": order_time
-                };
-                $.ajax({
-                        type: "post",
-                        url: "updateOrderServlet",
-                        data: data,
-                        dataType: "json",
-                        async: false,
-                        success: function (json, textStaus, jqXHR) {
-                            if (parseInt(json.code) === 1) {
-                                alert("更改失败！");
-                            }
-                            else {
-                                alert("更改成功！");
-                            }
-                        }
-                    }
-                );
-            }
-        }
-        function managementHide() {
-            $('.managementDiv').hide();
-            $('.buttonSet').show()
-        }
-        function managementShow() {
-            $('.managementDiv').show();
-            $('.buttonSet').hide()
-        }
-    </script>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="assets/bootstrap3-editable/css/bootstrap-editable.css">
+    <link rel="stylesheet" href="assets/bootstrap-select/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="assets/bootstrap-validator/css/bootstrapValidator.min.css">
+    <link rel="stylesheet" href="assets/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css">
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/bootstrap-table/bootstrap-table.min.js"></script>
+    <script src="assets/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+    <script src="assets/bootstrap-table/extensions/editable/bootstrap-table-editable.min.js"></script>
+    <script src="assets/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+    <script src="assets/bootstrap-select/js/bootstrap-select.min.js"></script>
+    <script src="assets/bootstrap-select/js/i18n/defaults-zh_CN.min.js"></script>
+    <script src="assets/bootstrap-validator/js/bootstrapValidator.min.js"></script>
+    <script src="assets/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="assets/bootstrap-datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="js/order_management.js"></script>
 </head>
 <body>
-<div class="root">
-    <header class="page-header">
-        <div class="container">
-            <div class="page-header-info">
-                <b><label>订单管理</label></b>
-            </div>
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container navbar-left">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="index.html">“快租车”后台管理</a>
         </div>
-    </header>
-    <div class="page-wrapper">
-        <div class="container">
-            <h2></h2>
-            <div class="col-list-1">
-                <a href="user_management.html" class="list-items" id="user_management">用户管理</a>
-                <a href="car_management.html" class="list-items" id="car_management">车辆管理</a>
-                <a href="car_type_management.html" class="list-items" id="car_type_management">车辆类型管理</a>
-                <a href="shop_management.html" class="list-items" id="shop_management">服务点管理</a>
-                <a href="order_management.html" class="list-items" id="order_management">订单管理</a>
-                <!--<a href="./bac_management.html" class="list-items" id="bac_management">违约记录管理</a>-->
-                <!--<a href="./peccancy_management.html" class="list-items" id="peccancy_management">违章记录管理</a>-->
-                <!--<a href="./accident_management.html" class="list-items" id="accident_management">事故记录管理</a>-->
-            </div>
-            <div class="col-info-9">
-                <div class="infoInterface">
-                    <div align="center" class="managementDiv">
-                        <div class="addManagement"></div>
-                        <div class="searchManagement"></div>
-                    </div>
-                    <div class="buttonSet">
-                        <input type="button" class="button" onclick="managementShow();$('.addManagement').show();$('.searchManagement').hide()" value="添加订单数据">
-                        <input type="button" class="button" onclick="managementShow();$('.addManagement').hide();$('.searchManagement').show()" value="查找订单数据">
-                    </div>
-                    <div align="center" class="infoDiv"></div>
-                </div>
-            </div>
+        <div>
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="user_management.html">用户管理</a>
+                </li>
+                <li>
+                    <a href="car_management.html">车辆管理</a>
+                </li>
+                <li>
+                    <a href="car_type_management.html">车辆类型管理</a>
+                </li>
+                <li>
+                    <a href="shop_management.html">服务点管理</a>
+                </li>
+                <li class="active">
+                    <a href="order_management.html">订单管理</a>
+                </li>
+            </ul>
         </div>
     </div>
-</div>
+</nav>
+    <div class="page-wrapper">
+        <div class="container">
+            <div align="center" class="infoDiv"></div>
+            <div id="toolbar">
+                <!--如果这里是表单的话，设置文本框监听回车键再按下回车键时会导致页面刷新-->
+                <input type="text" id="search_text" class="form-control" placeholder="请输入订单编号" style="float: left;">
+                <input type="button" id="search_btn" class="btn btn-default" style="float: left; position: absolute;" value="搜索" onclick="searchOrder()">
+                <!--这里找不到好的方法可以使三个 input 处于同一行，只能通过 margin 来变通-->
+                <input type="button" class="btn btn-primary" data-toggle="modal" data-target="#add_modal" style="float: left; position:absolute; margin-left: 60px" value="添加订单信息">
+            </div>
+            <div class="modal fade" id="add_modal" role="dialog" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="resetModal()">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel">添加订单信息</h4>
+                        </div>
+                        <div id="add_order_form">
+                            <div class="form-horizontal modal-body">
+                                <div class="form-group">
+                                    <label for="add_order_number" class="col-sm-3 control-label">订单编号</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" id="add_order_number" name="order_number" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add_user_phone" class="col-sm-3 control-label">用户手机号</label>
+                                    <div class="col-sm-7">
+                                        <select id="add_user_phone" class="selectpicker show-tick form-control" data-live-search="true"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add_car_number" class="col-sm-3 control-label">汽车编号</label>
+                                    <div class="col-sm-7">
+                                        <select id="add_car_number" class="selectpicker show-tick form-control" data-live-search="true"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add_take_shop" class="col-sm-3 control-label">取车服务点编号</label>
+                                    <div class="col-sm-7">
+                                        <select id="add_take_shop" class="selectpicker show-tick form-control" data-live-search="true"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add_return_shop" class="col-sm-3 control-label">还车服务点编号</label>
+                                    <div class="col-sm-7">
+                                        <select id="add_return_shop" class="selectpicker show-tick form-control" data-live-search="true"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add_take_time" class="col-sm-3 control-label">取车时间</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" id="add_take_time" class="datetimepicker form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add_return_time" class="col-sm-3 control-label">还车时间</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" id="add_return_time" class="datetimepicker form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add_order_amount" class="col-sm-3 control-label">订单金额</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" id="add_order_amount" name="order_amount" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add_order_state" class="col-sm-3 control-label">订单状态</label>
+                                    <div class="col-sm-7">
+                                        <select id="add_order_state" class="selectpicker show-tick form-control" data-live-search="true">
+                                            <option value="未取车">未取车</option>
+                                            <option value="未还车">未还车</option>
+                                            <option value="已还车">已还车</option>
+                                            <option value="已完成">已完成</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add_take_oil" class="col-sm-3 control-label">取车油量</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" id="add_take_oil" name="take_oil" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add_return_oil" class="col-sm-3 control-label">还车油量</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" id="add_return_oil" name="return_oil" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add_oil_amount" class="col-sm-3 control-label">油量花费</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" id="add_oil_amount" name="oil_amount" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-default" data-dismiss="modal" onclick="resetModal()">取消</button>
+                                <button class="btn btn-primary" onclick="addOrder()">确认添加</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <table id="order_info" class="table table-bordered tab-content" data-toolbar="#toolbar"></table>
+        </div>
+    </div>
 </body>
 </html>

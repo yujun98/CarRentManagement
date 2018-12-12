@@ -31,43 +31,43 @@ public class AddOrderServlet extends HttpServlet {
             String return_shop = request.getParameter("return_shop");
             String take_time = request.getParameter("take_time");
             String return_time = request.getParameter("return_time");
-            int order_amount = Integer.parseInt(request.getParameter("order_amount"));
+            float order_amount;
             String order_state = request.getParameter("order_state");
-            int take_oil = Integer.parseInt(request.getParameter("take_oil"));
-            int return_oil = Integer.parseInt(request.getParameter("return_oil"));
-            int oil_amount = Integer.parseInt(request.getParameter("oil_amount"));
+            float take_oil;
+            float return_oil;
+            float oil_amount;
             String order_time = request.getParameter("order_time");
 
-            if (order_number.length() == 0) {
-                order_number = null;
-            }
-            if (user_phone.length() == 0) {
-                user_phone = null;
-            }
-            if (car_number.length() == 0) {
-                car_number = null;
-            }
-            if (take_shop.length() == 0) {
-                take_shop = null;
-            }
-            if (return_shop.length() == 0) {
-                return_shop = null;
-            }
-            if (take_time.length() == 0) {
-                take_time = null;
-            }
             if (return_time.length() == 0) {
                 return_time = null;
             }
-            if (order_state.length() == 0) {
-                order_state = null;
+            if (request.getParameter("order_amount").length() == 0) {
+                order_amount = 0;
             }
-            if (order_time.length() == 0) {
-                order_time = null;
+            else {
+                order_amount = Float.parseFloat(request.getParameter("order_amount"));
+            }
+            if (request.getParameter("take_oil").length() == 0) {
+                take_oil = 0;
+            }
+            else {
+                take_oil = Float.parseFloat(request.getParameter("take_oil"));
+            }
+            if (request.getParameter("return_oil").length() == 0) {
+                return_oil = 0;
+            }
+            else {
+                return_oil = Float.parseFloat(request.getParameter("return_oil"));
+            }
+            if (request.getParameter("oil_amount").length() == 0) {
+                oil_amount = 0;
+            }
+            else {
+                oil_amount = Float.parseFloat(request.getParameter("oil_amount"));
             }
 
             Connection conn = DatabaseInit.getConnection();
-            String sql = "insert into car_rent.order_info(order_number, user_phone, car_number, take_shop, return_shop, take_time, return_time, order_amount, order_state, take_oil, return_oil, oil_amount, order_time) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+            String sql = "insert into car.order_info(order_number, user_phone, car_number, take_shop, return_shop, take_time, return_time, order_amount, order_state, take_oil, return_oil, oil_amount, order_time) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, order_number);
             ps.setString(2, user_phone);
@@ -76,13 +76,24 @@ public class AddOrderServlet extends HttpServlet {
             ps.setString(5, return_shop);
             ps.setString(6, take_time);
             ps.setString(7, return_time);
-            ps.setInt(8, order_amount);
+            ps.setFloat(8, order_amount);
             ps.setString(9, order_state);
-            ps.setInt(10, take_oil);
-            ps.setInt(11, return_oil);
-            ps.setInt(12, oil_amount);
+            ps.setFloat(10, take_oil);
+            ps.setFloat(11, return_oil);
+            ps.setFloat(12, oil_amount);
             ps.setString(13, order_time);
             ps.executeUpdate();
+
+            String specialSql = "update car.car set car_state = ? where car_number = ?";
+            PreparedStatement specialPs = conn.prepareStatement(specialSql);
+            specialPs.setString(2, car_number);
+            if (order_state.equals("未取车") || order_state.equals("未还车")) {
+                specialPs.setString(1, "已租");
+            }
+            else {
+                specialPs.setString(1, "未租");
+            }
+            specialPs.executeUpdate();
         } catch (Exception e) {
             json = "{\"code\": \"1\"}";
             out.println(JSONObject.fromObject(json));

@@ -93,6 +93,7 @@ function initTable() {
         }, {
             field: 'shop_name',
             title: '服务点名称',
+            sortable: true,
             type: 'text',
             editable: {
                 title: '输入服务点名称',
@@ -106,7 +107,6 @@ function initTable() {
         }, {
             field: 'shop_city',
             title: '所在城市',
-            sortable: true,
             editable: {
                 title: '输入所在城市',
                 type: 'text',
@@ -150,7 +150,7 @@ function initTable() {
                     if (!v) {
                         return '联系电话不能为空';
                     }
-                    else if (isNaN(v) || parseInt(v-1) <= 0) {
+                    else if (isNaN(v) || parseFloat(v) < 0) {
                         return '联系电话格式不符';
                     }
                     else if (v.length !== 11) {

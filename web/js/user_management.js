@@ -141,7 +141,7 @@ function initTable() {
                     if (isNaN(v)) {
                         return '用户押金必须是数字';
                     }
-                    else if (parseInt(v-1) <= 0) {
+                    else if (parseFloat(v) < 0) {
                         return "用户押金不能小于0";
                     }
                 }
@@ -156,7 +156,7 @@ function initTable() {
                     if (isNaN(v)) {
                         return '用户余额必须是数字';
                     }
-                    else if (parseInt(v-1) < 0) {
+                    else if (parseFloat(v) < 0) {
                         return "用户余额不能小于0";
                     }
                 }

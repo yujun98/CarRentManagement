@@ -110,7 +110,7 @@ function initTable() {
                     if (!v) {
                         return '日租金不能为空';
                     }
-                    else if (parseInt(v-1) < 0) {
+                    else if (parseFloat(v) < 0) {
                         return '日租金不能小于0';
                     }
                 }
@@ -118,6 +118,7 @@ function initTable() {
         }, {
             field: 'car_deposit',
             title: '所需押金',
+            sortable: true,
             editable: {
                 title: '输入所需押金',
                 type: 'text',
@@ -125,7 +126,7 @@ function initTable() {
                     if (!v) {
                         return '所需押金不能为空';
                     }
-                    else if (parseInt(v-1) < 0) {
+                    else if (parseFloat(v) < 0) {
                         return '所需押金不能小于0';
                     }
                 }

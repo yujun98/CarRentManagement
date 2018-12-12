@@ -90,6 +90,7 @@ function initTable() {
             field: 'plate_number',
             title: '车辆车牌号',
             type: 'text',
+            sortable: true,
             editable: {
                 title: '输入车辆车牌号',
                 type: 'text',
@@ -102,7 +103,6 @@ function initTable() {
         }, {
             field: 'car_name',
             title: '车辆名称',
-            sortable: true,
             editable: {
                 title: '选择车辆名称',
                 type: 'select',
@@ -150,6 +150,7 @@ function initTable() {
         }, {
             field: 'shop_number',
             title: '所属服务点编号',
+            sortable: true,
             editable: {
                 title: '选择所属服务点编号',
                 type: 'select',

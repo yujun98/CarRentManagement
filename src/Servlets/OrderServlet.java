@@ -27,7 +27,7 @@ public class OrderServlet extends HttpServlet {
         ArrayList<Order> list=new ArrayList<>();
         try {
             Connection conn = DatabaseInit.getConnection();
-            String sql = "select * from car_rent.order_info order by order_number;";
+            String sql = "select * from car.order_info order by order_number;";
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(sql);
 
