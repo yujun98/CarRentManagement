@@ -262,4 +262,44 @@
         <servlet-name>searchBacServlet</servlet-name>
         <url-pattern>/searchBacServlet</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>peccancyServlet</servlet-name>
+        <servlet-class>Servlets.PeccancyServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>peccancyServlet</servlet-name>
+        <url-pattern>/peccancyServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>addPeccancyServlet</servlet-name>
+        <servlet-class>Servlets.AddPeccancyServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>addPeccancyServlet</servlet-name>
+        <url-pattern>/addPeccancyServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>deletePeccancyServlet</servlet-name>
+        <servlet-class>Servlets.DeletePeccancyServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>deletePeccancyServlet</servlet-name>
+        <url-pattern>/deletePeccancyServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>updatePeccancyServlet</servlet-name>
+        <servlet-class>Servlets.UpdatePeccancyServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>updatePeccancyServlet</servlet-name>
+        <url-pattern>/updatePeccancyServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>searchPeccancyServlet</servlet-name>
+        <servlet-class>Servlets.SearchPeccancyServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>searchPeccancyServlet</servlet-name>
+        <url-pattern>/searchPeccancyServlet</url-pattern>
+    </servlet-mapping>
 </web-app>
