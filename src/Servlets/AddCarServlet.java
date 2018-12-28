@@ -1,7 +1,6 @@
 package Servlets;
 
 import Classes.DatabaseInit;
-import net.sf.json.JSONObject;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -11,6 +10,7 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
+//添加汽车信息的 Servlet
 public class AddCarServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         doPost(request, response);
@@ -20,7 +20,6 @@ public class AddCarServlet extends HttpServlet {
         response.setContentType("text/html;charset=utf-8");
         response.setCharacterEncoding("utf-8");
 
-        String json;
         PrintWriter out = response.getWriter();
 
         try {
@@ -30,6 +29,7 @@ public class AddCarServlet extends HttpServlet {
             String car_state = request.getParameter("car_state");
             String shop_number = request.getParameter("shop_number");
 
+            //连接数据库，进行添加操作
             Connection conn = DatabaseInit.getConnection();
             String sql = "insert into car.car(car_number, plate_number, car_name, car_state, shop_number) values (?, ?, ?, ?, ?);";
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -40,14 +40,14 @@ public class AddCarServlet extends HttpServlet {
             ps.setString(5, shop_number);
             ps.executeUpdate();
         } catch (Exception e) {
-            json = "{\"code\": \"1\"}";
-            out.println(JSONObject.fromObject(json));
+            //如果出错，向网页返回错误信息
+            out.println(e);
             out.close();
             e.printStackTrace();
         }
 
-        json = "{\"code\": \"0\"}";
-        out.println(JSONObject.fromObject(json));
+        //如果成功，向网页返回“0”
+        out.println(0);
         out.close();
     }
 }

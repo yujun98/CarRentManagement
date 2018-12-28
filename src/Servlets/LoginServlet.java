@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+//登录验证的 Servlet
 public class LoginServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response) throws ServletException, IOException {
@@ -18,7 +19,7 @@ public class LoginServlet extends HttpServlet {
     }
     protected void doPost(HttpServletRequest request,
                           HttpServletResponse response) throws ServletException, IOException {
-        // 设置编码为utf-8
+        // 设置编码为 utf-8
         request.setCharacterEncoding("utf-8");
         response.setCharacterEncoding("utf-8");
 
@@ -28,8 +29,8 @@ public class LoginServlet extends HttpServlet {
         String manager_pwd = null;
 
         try {
-            Connection conn= DatabaseInit.getConnection();
-            String sql="select * from car_rent.manager where manager_id = ?;";
+            Connection conn = DatabaseInit.getConnection();
+            String sql = "select * from car.manager where manager_id = ?;";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, name);
             ResultSet rs = ps.executeQuery();
@@ -41,14 +42,15 @@ public class LoginServlet extends HttpServlet {
             e.printStackTrace();
         }
 
-        // 校验用户名和密码是否正确
+        //校验用户名和密码是否正确
         if (manager_pwd != null && manager_pwd.equals(password)) {
-            //获取session
+            //获取 session
             HttpSession session = request.getSession();
-            //将用户名保存在session中
+            //将用户名保存在 session 中
             session.setAttribute("name", name);
             response.sendRedirect("index.html");
-        } else {// 校验不成功，则跳转到login.html页面
+        } else {
+            //校验不成功，则跳转到 login.html 页面
             response.setContentType("text/html;charset=utf-8");
             PrintWriter pw=response.getWriter();
             pw.write("<script language='javascript'>alert('请输入正确的用户名密码');window.location.href='login.html'</script>");

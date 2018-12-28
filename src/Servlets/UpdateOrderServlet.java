@@ -1,7 +1,6 @@
 package Servlets;
 
 import Classes.DatabaseInit;
-import net.sf.json.JSONObject;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -11,6 +10,7 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
+//更新订单记录的 Servlet
 public class UpdateOrderServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         doPost(request, response);
@@ -20,7 +20,6 @@ public class UpdateOrderServlet extends HttpServlet {
         response.setContentType("text/html;charset=utf-8");
         response.setCharacterEncoding("utf-8");
 
-        String json;
         PrintWriter out = response.getWriter();
 
         try {
@@ -60,6 +59,7 @@ public class UpdateOrderServlet extends HttpServlet {
             ps.setString(13, order_number);
             ps.executeUpdate();
 
+            //如果订单状态变化，相应的汽车状态也会发生变化
             String specialSql = "update car.car set car_state = ? where car_number = ?";
             PreparedStatement specialPs = conn.prepareStatement(specialSql);
             specialPs.setString(2, car_number);
@@ -71,14 +71,14 @@ public class UpdateOrderServlet extends HttpServlet {
             }
             specialPs.executeUpdate();
         } catch (Exception e) {
-            json = "{\"code\": \"1\"}";
-            out.println(JSONObject.fromObject(json));
+            //如果出错，向网页返回错误信息
+            out.println(e);
             out.close();
             e.printStackTrace();
         }
 
-        json = "{\"code\": \"0\"}";
-        out.println(JSONObject.fromObject(json));
+        //如果成功，向网页返回“0”
+        out.println(0);
         out.close();
     }
 }

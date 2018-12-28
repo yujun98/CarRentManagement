@@ -15,6 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+//查找订单记录的 Servlet
 public class SearchOrderServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         doPost(request, response);
@@ -24,6 +25,7 @@ public class SearchOrderServlet extends HttpServlet {
         response.setContentType("text/html;charset=utf-8");
         response.setCharacterEncoding("utf-8");
 
+        //将数据库查询到的数据存储在 ArrayList 中，再将 ArrayList 转换为 JSONArray，最后输出到网页中由 Ajax 进行解析
         ArrayList<Order> list = new ArrayList<>();
         try {
             Connection conn = DatabaseInit.getConnection();

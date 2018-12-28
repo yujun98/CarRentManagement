@@ -1,58 +1,57 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
-<script>
-    //防止页面后退
-    history.pushState(null, null, document.URL);
-    window.addEventListener('popstate', function () {
-        history.pushState(null, null, document.URL);
-    });
-</script>
 <head>
-    <meta charset="UTF-8">
     <title>“快租车”管理员登陆</title>
+    <meta charset="UTF-8">
     <link rel="stylesheet" href="css/login.css" type="text/css">
+    <script>
+        //防止页面后退
+        history.pushState(null, null, document.URL);
+        window.addEventListener('popstate', function () {
+            history.pushState(null, null, document.URL);
+        });
+    </script>
 </head>
 <body>
-<div class="contain">
-    <div class="left">
-        <div class="app">
-            <img src="./images/car.png" width="30px" height="18px" align="center"/>&nbsp;&nbsp;&nbsp;Face Team
-        </div>
-        <div class="head"><p>Hello Manager!</p></div>
-        <p class="text">
-            <a href="mailto:1109341723@qq.com">contact us</a>&nbsp;if you have<br/><br/>
-            any questions
-        </p>
-    </div>
-
-    <div class="right">
-        <div class="head">Administrator Login</div>
-        <div class="blank">
-            <div class="picture">
-                <button class="button3">Aloon</button>
-                <button class="button3">Sedan</button>
-                <button class="button3">Super</button>
+    <div class="contain">
+        <div class="left">
+            <div class="app">
+                <img src="/images/car.png" width="30px" height="18px" align="center"/>&nbsp;&nbsp;&nbsp;Face Team
             </div>
-            <div class="text"><p>login to manage data</p></div>
+            <div class="head"><p>Hello Manager!</p></div>
+            <p class="text">
+                <a href="mailto:1109341723@qq.com">contact us</a>&nbsp;if you have<br/><br/>
+                any questions
+            </p>
         </div>
-        <div class="login">
-            <form action="loginServlet" method="post">
-                <table>
-                    <tr>
-                        <td class="box"><input class="name" name="name" type="text" placeholder="Name" onfocus="this.placeholder=''" onblur="this.placeholder='Name'"></td>
-                    </tr>
-                    <tr ><td height="15px"></td></tr>
-                    <tr>
-                        <td class="box"><input class="password" name="password" type="password" placeholder="Password" onfocus="this.placeholder=''" onblur="this.placeholder='Password'"></td>
-                    </tr>
-                    <tr ><td height="25px"></td></tr>
-                    <tr>
-                        <td><button class="button1" style="vertical-align:middle"><span>SIGN IN</span></button></td>
-                    </tr>
-                </table>
-            </form>
+        <div class="right">
+            <div class="head">Administrator Login</div>
+            <div class="blank">
+                <div class="picture">
+                    <button class="button3">Van</button>
+                    <button class="button3">Sedan</button>
+                    <button class="button3">Super</button>
+                </div>
+                <div class="text"><p>login to manage data</p></div>
+            </div>
+            <div class="login">
+                <form action="loginServlet" method="post">
+                    <table>
+                        <tr>
+                            <td class="box"><input class="name" name="name" type="text" placeholder="Name" onfocus="this.placeholder=''" onblur="this.placeholder='Name'"></td>
+                        </tr>
+                        <tr><td height="15px"></td></tr>
+                        <tr>
+                            <td class="box"><input class="password" name="password" type="password" placeholder="Password" onfocus="this.placeholder=''" onblur="this.placeholder='Password'"></td>
+                        </tr>
+                        <tr><td height="25px"></td></tr>
+                        <tr>
+                            <td><button class="button1" style="vertical-align:middle"><span>SIGN IN</span></button></td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 </body>
 </html>

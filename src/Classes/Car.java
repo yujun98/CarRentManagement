@@ -1,5 +1,6 @@
 package Classes;
 
+//汽车类
 public class Car {
     //汽车编号
     private String car_number;

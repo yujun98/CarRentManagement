@@ -1,5 +1,6 @@
 package Classes;
 
+//订单类
 public class Order {
     //订单编号
     private String order_number;

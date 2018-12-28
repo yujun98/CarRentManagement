@@ -1,18 +1,27 @@
 $(document).ready(function(){
+    //初始化 Selectpicker 插件
+    initSelectpicker();
+    //初始化表格
     initTable();
-    vadidateModal();
-    initSelect();
+    //初始化 Validator 插件
+    validateModal();
+    //设置搜索框的回车监听
     $('#search_text').keydown(function (e) {
         if (e.keyCode === 13) {
             $('#search_btn').click();
         }
     });
 });
+
+//添加违约记录
 function addBac() {
+    //启用 validator 插件
     $('#add_bac_form').data('bootstrapValidator').validate();
+    //如果有不符合 validator 插件限制条件的条目，则不能添加
     if(!$('#add_bac_form').data('bootstrapValidator').isValid()){
-        return ;
+        return;
     }
+    //使添加前弹出的 modal 隐藏
     $('#add_modal').modal('hide');
     var order_number = $('#add_order_number').val();
     var amount = $('#add_amount').val();
@@ -22,24 +31,28 @@ function addBac() {
         "amount": amount,
         "type": type
     };
+    //通过 data 变量以 JSON 的形式向后台传递信息，后台再以 text 的形式放回，再通过判断返回的值判断是否操作成功
     $.ajax({
         type: "post",
         url: "addBacServlet",
         data: data,
-        dataType: "json",
+        dataType: "text",
         async: false,
-        success: function(json) {
-            if(parseInt(json.code) === 1) {
+        success: function(data) {
+            if(parseInt(data) !== 0) {
                 alert("添加失败！");
+                console.log(data);
             }
             else {
                 alert("添加成功！");
+                $('#bac_info').bootstrapTable('refresh');
             }
         }
     });
-    $('#bac_info').bootstrapTable('refresh');
     resetModal();
 }
+
+//查找函数，通过 Ajax 传递表的主键值在后台进行查找，后台再返回 JSON 形式的数据，然后在网页内由 bootstrapTable 加载
 function searchBac() {
     var order_number = $("#search_text").val();
     var data = {
@@ -56,12 +69,31 @@ function searchBac() {
     });
     $('#search_text').val('');
 }
+
+//通过 Ajax 获取选项值，用 selectpicker 插件加载
+function initSelectpicker() {
+    $.ajax({
+        type: "post",
+        url: "orderServlet",
+        dataType: "json",
+        success: function (json) {
+            var html = '';
+            $.each(json, function (key, value) {
+                html += '<option value="' + value.order_number + '">' + value.order_number + '</option>';
+            });
+            $('#add_order_number').html(html);
+            $('#add_order_number').selectpicker('refresh');
+        }
+    });
+}
+
+//初始化 bootstrapTable
 function initTable() {
     $('#bac_info').bootstrapTable('destroy');
     $("#bac_info").bootstrapTable({
-        //使用post请求到服务器获取数据
+        //使用 post 请求到服务器获取数据
         method: "post",
-        //获取数据的Servlet地址
+        //获取数据的 Servlet 地址
         url: "bacServlet",
         //表格显示条纹
         striped: true,
@@ -120,14 +152,16 @@ function initTable() {
                     var data = {
                         "order_number": row.order_number
                     };
+                    //通过 data 变量以 JSON 的形式向后台传递信息，后台再以 text 的形式放回，再通过判断返回的值判断是否操作成功
                     $.ajax({
                         type: "post",
                         url: "deleteBacServlet",
                         data: data,
-                        dataType: "json",
-                        success: function(json){
-                            if(parseInt(json.code) === 1) {
+                        dataType: "text",
+                        success: function(data) {
+                            if(parseInt(data) !== 0) {
                                 alert("删除失败！");
+                                console.log(data);
                             }
                             else {
                                 alert("删除成功！");
@@ -147,40 +181,30 @@ function initTable() {
                 "amount": row.amount,
                 "type": row.type
             };
+            //通过 data 变量以 JSON 的形式向后台传递信息，后台再以 text 的形式放回，再通过判断返回的值判断是否操作成功
             $.ajax({
                 type: "post",
                 url: "updateBacServlet",
                 data: data,
-                dataType: "json",
+                dataType: "text",
                 async: false,
-                success: function(json) {
-                    if(parseInt(json.code) === 1) {
+                success: function(data) {
+                    if(parseInt(data) !== 0) {
                         alert("更改失败！");
+                        console.log(data);
                     }
                     else {
                         alert("更改成功！");
+                        $('#bac_info').bootstrapTable('refresh');
                     }
                 }
             });
         }
     });
 }
-function initSelect() {
-    $.ajax({
-        type: "post",
-        url: "orderServlet",
-        dataType: "json",
-        success: function (json) {
-            var html = '';
-            $.each(json, function (key, value) {
-                html += '<option value="' + value.order_number + '">' + value.order_number + '</option>';
-            });
-            $('#add_order_number').html(html);
-            $('#add_order_number').selectpicker('refresh');
-        }
-    });
-}
-function vadidateModal() {
+
+//在 Modal 中启用 Validator 插件
+function validateModal() {
     $('#add_bac_form').bootstrapValidator({
         feedbackIcons: {
             invalid: 'glyphicon glyphicon-remove',
@@ -208,10 +232,12 @@ function vadidateModal() {
         }
     });
 }
+
+//重置 Modal
 function resetModal() {
     $('#add_bac_form').find('input').val('');
     $('#add_bac_form').data('bootstrapValidator').destroy();
     $('#add_bac_form').data('bootstrapValidator', null);
     $('#add_order_number').selectpicker('refresh');
-    vadidateModal();
+    validateModal();
 }

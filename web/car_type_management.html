@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="assets/bootstrap-table/bootstrap-table.css">
     <link rel="stylesheet" href="assets/bootstrap-select/css/bootstrap-select.min.css">
     <link rel="stylesheet" href="assets/bootstrap-validator/css/bootstrapValidator.min.css">
+    <link href="https://cdn.bootcss.com/cropper/3.1.3/cropper.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/picture.css">
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="assets/bootstrap-table/bootstrap-table.min.js"></script>
@@ -18,6 +20,7 @@
     <script src="assets/bootstrap-select/js/bootstrap-select.min.js"></script>
     <script src="assets/bootstrap-select/js/i18n/defaults-zh_CN.min.js"></script>
     <script src="assets/bootstrap-validator/js/bootstrapValidator.min.js"></script>
+    <script src="https://cdn.bootcss.com/cropper/3.1.3/cropper.min.js"></script>
     <script src="js/car_type_management.js"></script>
 </head>
     <body>
@@ -48,6 +51,9 @@
                     </li>
                     <li>
                         <a href="peccancy_management.html">违章记录管理</a>
+                    </li>
+                    <li>
+                        <a href="accident_management.html">事故记录管理</a>
                     </li>
                 </ul>
             </div>
@@ -106,6 +112,16 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <label for="add_car_type" class="col-sm-3 control-label">车辆图片</label>
+                                    <div class="col-sm-7">
+                                        <button class="btn btn-primary" id="add_car_picture" data-target="#changeModal" data-toggle="modal">点击添加汽车图片</button><br/>
+                                        <!-- 显示添加的图片 -->
+                                        <div class="user-photo-box">
+                                            <img id="user-photo">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="modal-footer">
                                 <button class="btn btn-default" data-dismiss="modal" onclick="resetModal()">取消</button>
@@ -116,6 +132,35 @@
                 </div>
             </div>
             <table id="car_type_info" class="table table-bordered tab-content" data-toolbar="#toolbar"></table>
+        </div>
+    </div>
+    <!-- 剪裁并预览图片 -->
+    <div class="modal fade" id="changeModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title text-primary"><i class="fa fa-pencil"></i>汽车图片</h4>
+                </div>
+                <div class="modal-body"><p class="tip-info text-center">未选择图片</p>
+                    <div class="img-container hidden"><img src="" alt="" id="photo"></div>
+                    <div class="img-preview-box hidden">
+                        <hr/>
+                        <span>160*90:</span>
+                        <div class="img-preview img-preview-lg"></div>
+                        <span>80*45:</span>
+                        <div class="img-preview img-preview-md"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <label class="btn btn-danger pull-left" for="photoInput">
+                        <input type="file" class="sr-only" id="photoInput" accept="image/*">
+                        <span>打开图片</span>
+                    </label>
+                    <button class="btn btn-primary disabled" onclick="sendPhoto();">提交</button>
+                    <button class="btn btn-close" aria-hidden="true" data-dismiss="modal">取消</button>
+                </div>
+            </div>
         </div>
     </div>
 </body>

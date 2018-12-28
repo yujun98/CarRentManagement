@@ -302,4 +302,44 @@
         <servlet-name>searchPeccancyServlet</servlet-name>
         <url-pattern>/searchPeccancyServlet</url-pattern>
     </servlet-mapping>
+    <servlet>
+    <servlet-name>accidentServlet</servlet-name>
+    <servlet-class>Servlets.AccidentServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>accidentServlet</servlet-name>
+        <url-pattern>/accidentServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>addAccidentServlet</servlet-name>
+        <servlet-class>Servlets.AddAccidentServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>addAccidentServlet</servlet-name>
+        <url-pattern>/addAccidentServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>deleteAccidentServlet</servlet-name>
+        <servlet-class>Servlets.DeleteAccidentServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>deleteAccidentServlet</servlet-name>
+        <url-pattern>/deleteAccidentServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>updateAccidentServlet</servlet-name>
+        <servlet-class>Servlets.UpdateAccidentServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>updateAccidentServlet</servlet-name>
+        <url-pattern>/updateAccidentServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>searchAccidentServlet</servlet-name>
+        <servlet-class>Servlets.SearchAccidentServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>searchAccidentServlet</servlet-name>
+        <url-pattern>/searchAccidentServlet</url-pattern>
+    </servlet-mapping>
 </web-app>

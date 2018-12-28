@@ -1,5 +1,6 @@
 package Classes;
 
+//服务点类
 public class Shop {
     //服务点编号
     private String shop_number;

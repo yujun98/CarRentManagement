@@ -3,6 +3,7 @@ package Classes;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
+//数据库连接初始化类
 public class DatabaseInit {
     private static final String url = "jdbc:mysql://localhost:3306/";
     private static final String username = "root";

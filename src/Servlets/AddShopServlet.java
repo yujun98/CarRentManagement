@@ -1,8 +1,6 @@
 package Servlets;
 
 import Classes.DatabaseInit;
-import jdk.internal.org.objectweb.asm.Type;
-import net.sf.json.JSONObject;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +10,7 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
+//添加服务点信息的 Servlet
 public class AddShopServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         doPost(request, response);
@@ -21,7 +20,6 @@ public class AddShopServlet extends HttpServlet {
         response.setContentType("text/html;charset=utf-8");
         response.setCharacterEncoding("utf-8");
 
-        String json;
         PrintWriter out = response.getWriter();
 
         try {
@@ -33,6 +31,7 @@ public class AddShopServlet extends HttpServlet {
             String shop_phone = request.getParameter("shop_phone");
             String shop_hours = request.getParameter("shop_hours");
 
+            //连接数据库，进行添加操作
             Connection conn = DatabaseInit.getConnection();
             String sql = "insert into car.shop(shop_number, shop_city, shop_area, shop_name, shop_address, shop_phone, shop_hours) values (?, ?, ?, ?, ?, ?, ?);";
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -45,14 +44,14 @@ public class AddShopServlet extends HttpServlet {
             ps.setString(7, shop_hours);
             ps.executeUpdate();
         } catch (Exception e) {
-            json = "{\"code\": \"1\"}";
-            out.println(JSONObject.fromObject(json));
+            //如果出错，向网页返回错误信息
+            out.println(e);
             out.close();
             e.printStackTrace();
         }
 
-        json = "{\"code\": \"0\"}";
-        out.println(JSONObject.fromObject(json));
+        //如果成功，向网页返回“0”
+        out.println(0);
         out.close();
     }
 }

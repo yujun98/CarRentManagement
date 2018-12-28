@@ -1,5 +1,6 @@
 package Classes;
 
+//违约类
 public class Bac {
     //订单编号
     private String order_number;

@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+//汽车处理的 Servlet
 public class CarServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         doPost(request, response);
@@ -24,8 +25,10 @@ public class CarServlet extends HttpServlet {
         response.setContentType("text/html;charset=utf-8");
         response.setCharacterEncoding("utf-8");
 
+        //创建 Car 类型的 ArrayList
         ArrayList<Car> list = new ArrayList<>();
         try {
+            //连接数据库，进行查找操作
             Connection conn = DatabaseInit.getConnection();
             String sql = "select * from car.car order by car_number;";
             Statement st = conn.createStatement();
@@ -35,6 +38,7 @@ public class CarServlet extends HttpServlet {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        //将 ArrayList 转化为 JSONArray
         JSONArray json = JSONArray.fromObject(list);
 
         PrintWriter out = response.getWriter();
@@ -42,6 +46,7 @@ public class CarServlet extends HttpServlet {
         out.close();
     }
 
+    //将进行数据库查找操作后的返回集中的信息依此添加到 ArrayList 中
     static void getList(ArrayList<Car> list, ResultSet rs) throws SQLException {
         while(rs.next())
         {

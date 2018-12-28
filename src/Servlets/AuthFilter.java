@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+//对未登录用户进行过滤的 Filter
 public class AuthFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -20,8 +21,8 @@ public class AuthFilter implements Filter {
 
         if (!((rq.getContextPath() + "/login.html").equals(myURI) || (rq.getContextPath() + "/").equals(myURI))) {
             HttpSession session = rq.getSession(false);
+            //当用户访问除登录页面外的其它页面时，如果用户未登录则让其放回到登录页面
             if (session == null || session.getAttribute("name") == null) {
-//                rp.sendRedirect(rq.getContextPath() + "/login.html");
                 rp.setContentType("text/html;charset=UTF-8");
                 rp.getWriter().write("尚未登录，将跳转到登录页面！");
                 rp.setHeader("refresh", "3;url=" + rq.getContextPath() + "/login.html");

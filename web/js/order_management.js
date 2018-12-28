@@ -1,11 +1,17 @@
 $(document).ready(function(){
+    //初始化 Selectpicker 插件
+    initSelectpicker();
+    //初始化表格
     initTable();
-    vadidateModal();
+    //初始化 Validator 插件
+    validateModal();
+    //设置搜索框的回车监听
     $('#search_text').keydown(function (e) {
         if (e.keyCode === 13) {
             $('#search_btn').click();
         }
     });
+    //初始化 datetimepicker 插件
     $('.datetimepicker').datetimepicker({
         autoclose: true,
         clearBtn: true,
@@ -14,11 +20,16 @@ $(document).ready(function(){
         todayHighlight: true
     })
 });
+
+//添加订单记录
 function addOrder() {
+    //启用 validator 插件
     $('#add_order_form').data('bootstrapValidator').validate();
+    //如果有不符合 validator 插件限制条件的条目，则不能添加
     if(!$('#add_order_form').data('bootstrapValidator').isValid()){
         return;
     }
+    //使添加前弹出的 modal 隐藏
     $('#add_modal').modal('hide');
     var order_number = $('#add_order_number').val();
     var user_phone = $('#add_user_phone').val();
@@ -48,22 +59,24 @@ function addOrder() {
         "return_oil": return_oil,
         "oil_amount": oil_amount
     };
+    //通过 data 变量以 JSON 的形式向后台传递信息，后台再以 text 的形式放回，再通过判断返回的值判断是否操作成功
     $.ajax({
         type: "post",
         url: "addOrderServlet",
         data: data,
-        dataType: "json",
+        dataType: "text",
         async: false,
-        success: function(json) {
-            if(parseInt(json.code) === 1) {
+        success: function(data) {
+            if(parseInt(data) !== 0) {
                 alert("添加失败！");
+                console.log(data);
             }
             else {
                 alert("添加成功！");
+                $('#order_info').bootstrapTable('refresh');
             }
         }
     });
-    $('#order_info').bootstrapTable('refresh');
     resetModal();
 }
 function searchOrder() {
@@ -82,12 +95,64 @@ function searchOrder() {
     });
     $('#search_text').val('');
 }
+
+//通过 Ajax 获取选项值，用 selectpicker 插件加载
+function initSelectpicker() {
+    $.ajax({
+        type: "post",
+        url: "userServlet",
+        dataType: "json",
+        async: false,
+        success: function (json) {
+            var html = '';
+            $.each(json, function (key, value) {
+                html += '<option value="' + value.user_phone + '">' + value.user_phone + '</option>';
+            });
+            $('#add_user_phone').html(html);
+            $('#add_user_phone').selectpicker('refresh');
+        }
+    });
+    $.ajax({
+        type: "post",
+        url: "carServlet",
+        dataType: "json",
+        async: false,
+        success: function (json) {
+            var html = '';
+            $.each(json, function (key, value) {
+                if (value.car_state === "未租") {
+                    html += '<option value="' + value.car_number + '">' + value.car_number + '</option>';
+                }
+            });
+            $('#add_car_number').html(html);
+            $('#add_car_number').selectpicker('refresh');
+        }
+    });
+    $.ajax({
+        type: "post",
+        url: "shopServlet",
+        dataType: "json",
+        async: false,
+        success: function (json) {
+            var html = '';
+            $.each(json, function (key, value) {
+                html += '<option value="' + value.shop_number + '">' + value.shop_number + '</option>';
+            });
+            $('#add_take_shop').html(html);
+            $('#add_take_shop').selectpicker('refresh');
+            $('#add_return_shop').html(html);
+            $('#add_return_shop').selectpicker('refresh');
+        }
+    });
+}
+
+//初始化 bootstrapTable
 function initTable() {
     $('#order_info').bootstrapTable('destroy');
     $("#order_info").bootstrapTable({
-        //使用post请求到服务器获取数据
+        //使用 post 请求到服务器获取数据
         method: "post",
-        //获取数据的Servlet地址
+        //获取数据的 Servlet 地址
         url: "orderServlet",
         //表格显示条纹
         striped: true,
@@ -122,19 +187,15 @@ function initTable() {
                         type: "post",
                         url: "userServlet",
                         dataType: "json",
-                        //这里要设置未同步，否者之后 return 那里在 result 还没完成更改就把 result 对象给返回了。
+                        //这里要设置未同步，否者之后 return 那里在 result 还没完成更改就把 result 对象给返回了
                         async: false,
                         success: function (json) {
-                            var html = '';
                             $.each(json, function (key, value) {
-                                html += '<option value="' + value.user_phone + '">' + value.user_phone + '</option>';
                                 result.push({
                                     value: value.user_phone,
                                     text: value.user_phone
                                 });
                             });
-                            $('#add_user_phone').html(html);
-                            $('#add_user_phone').selectpicker('refresh');
                         }
                     });
                     return JSON.stringify(result);
@@ -158,21 +219,17 @@ function initTable() {
                         type: "post",
                         url: "carServlet",
                         dataType: "json",
-                        //这里要设置未同步，否者之后 return 那里在 result 还没完成更改就把 result 对象给返回了。
+                        //这里要设置未同步，否者之后 return 那里在 result 还没完成更改就把 result 对象给返回了
                         async: false,
                         success: function (json) {
-                            var html = '';
                             $.each(json, function (key, value) {
                                 if (value.car_state === "未租") {
-                                    html += '<option value="' + value.car_number + '">' + value.car_number + '</option>';
                                     result.push({
                                         value: value.car_number,
                                         text: value.car_number
                                     });
                                 }
                             });
-                            $('#add_car_number').html(html);
-                            $('#add_car_number').selectpicker('refresh');
                         }
                     });
                     return JSON.stringify(result);
@@ -196,19 +253,15 @@ function initTable() {
                         type: "post",
                         url: "shopServlet",
                         dataType: "json",
-                        //这里要设置未同步，否者之后 return 那里在 result 还没完成更改就把 result 对象给返回了。
+                        //这里要设置未同步，否者之后 return 那里在 result 还没完成更改就把 result 对象给返回了
                         async: false,
                         success: function (json) {
-                            var html = '';
                             $.each(json, function (key, value) {
-                                html += '<option value="' + value.shop_number + '">' + value.shop_number + '</option>';
                                 result.push({
                                     value: value.shop_number,
                                     text: value.shop_number
                                 });
                             });
-                            $('#add_take_shop').html(html);
-                            $('#add_take_shop').selectpicker('refresh');
                         }
                     });
                     return JSON.stringify(result);
@@ -232,19 +285,15 @@ function initTable() {
                         type: "post",
                         url: "shopServlet",
                         dataType: "json",
-                        //这里要设置未同步，否者之后 return 那里在 result 还没完成更改就把 result 对象给返回了。
+                        //这里要设置未同步，否者之后 return 那里在 result 还没完成更改就把 result 对象给返回了
                         async: false,
                         success: function (json) {
-                            var html = '';
                             $.each(json, function (key, value) {
-                                html += '<option value="' + value.shop_number + '">' + value.shop_number + '</option>';
                                 result.push({
                                     value: value.shop_number,
                                     text: value.shop_number
                                 });
                             });
-                            $('#add_return_shop').html(html);
-                            $('#add_return_shop').selectpicker('refresh');
                         }
                     });
                     return JSON.stringify(result);
@@ -362,14 +411,16 @@ function initTable() {
                     var data = {
                         "order_number": row.order_number
                     };
+                    //通过 data 变量以 JSON 的形式向后台传递信息，后台再以 text 的形式放回，再通过判断返回的值判断是否操作成功
                     $.ajax({
                         type: "post",
                         url: "deleteOrderServlet",
                         data: data,
-                        dataType: "json",
-                        success: function(json){
-                            if(parseInt(json.code) === 1) {
+                        dataType: "text",
+                        success: function(data) {
+                            if(parseInt(data) !== 0) {
                                 alert("删除失败！");
+                                console.log(data);
                             }
                             else {
                                 alert("删除成功！");
@@ -409,15 +460,17 @@ function initTable() {
                 "return_oil": row.return_oil,
                 "oil_amount": row.oil_amount
             };
+            //通过 data 变量以 JSON 的形式向后台传递信息，后台再以 text 的形式放回，再通过判断返回的值判断是否操作成功
             $.ajax({
                 type: "post",
                 url: "updateOrderServlet",
                 data: data,
-                dataType: "json",
+                dataType: "text",
                 async: false,
-                success: function(json) {
-                    if(parseInt(json.code) === 1) {
+                success: function(data) {
+                    if(parseInt(data) !== 0) {
                         alert("更改失败！");
+                        console.log(data);
                     }
                     else {
                         alert("更改成功！");
@@ -428,6 +481,8 @@ function initTable() {
         }
     });
 }
+
+//获取指定格式的时间：yy-MM-dd hh:mm:ss
 function getFormatTime() {
     var tmp = new Date();
     var year = tmp.getFullYear();
@@ -438,7 +493,9 @@ function getFormatTime() {
     var seconds = tmp.getSeconds();
     return year + '-' + month + '-' + date + ' ' + hours + ':' + minutes + ':' + seconds;
 }
-function vadidateModal() {
+
+//在 Modal 中启用 Validator 插件
+function validateModal() {
     $('#add_order_form').bootstrapValidator({
         feedbackIcons: {
             invalid: 'glyphicon glyphicon-remove',
@@ -494,6 +551,8 @@ function vadidateModal() {
         }
     });
 }
+
+//重置 Modal
 function resetModal() {
     $('#add_order_form').find('input').val('');
     $('#add_order_form').data('bootstrapValidator').destroy();
@@ -502,5 +561,5 @@ function resetModal() {
     $('#add_car_number').selectpicker('refresh');
     $('#add_take_shop').selectpicker('refresh');
     $('#add_return_shop').selectpicker('refresh');
-    vadidateModal();
+    validateModal();
 }

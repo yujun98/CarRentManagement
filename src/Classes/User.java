@@ -1,5 +1,6 @@
 package Classes;
 
+//用户类
 public class User {
     //用户电话号码
     private String user_phone;

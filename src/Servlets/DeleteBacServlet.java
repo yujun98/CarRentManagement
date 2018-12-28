@@ -1,7 +1,6 @@
 package Servlets;
 
 import Classes.DatabaseInit;
-import net.sf.json.JSONObject;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -11,6 +10,7 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
+//删除违约记录的 Servlet
 public class DeleteBacServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         doPost(request, response);
@@ -20,7 +20,6 @@ public class DeleteBacServlet extends HttpServlet {
         response.setContentType("text/html;charset=utf-8");
         response.setCharacterEncoding("utf-8");
 
-        String json;
         PrintWriter out = response.getWriter();
 
         try {
@@ -32,14 +31,14 @@ public class DeleteBacServlet extends HttpServlet {
             ps.setString(1, order_number);
             ps.executeUpdate();
         } catch (Exception e) {
-            json = "{\"code\": \"1\"}";
-            out.println(JSONObject.fromObject(json));
+            //如果出错，向网页返回错误信息
+            out.println(e);
             out.close();
             e.printStackTrace();
         }
 
-        json = "{\"code\": \"0\"}";
-        out.println(JSONObject.fromObject(json));
+        //如果成功，向网页返回“0”
+        out.println(0);
         out.close();
     }
 }

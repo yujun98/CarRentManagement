@@ -1,5 +1,6 @@
 package Classes;
 
+//违章类
 public class Peccancy {
     //订单编号
     private String order_number;

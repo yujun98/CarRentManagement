@@ -3,6 +3,8 @@ package Classes;
 public class CarType {
     //汽车名称
     private String car_name;
+    //汽车图片
+    private String car_picture;
     //汽车品牌
     private String car_brand;
     //汽车类型
@@ -15,6 +17,7 @@ public class CarType {
     public void setCar_name(String car_name) {
         this.car_name = car_name;
     }
+    public void setCar_picture(String car_picture) { this.car_picture = car_picture; }
     public void setCar_brand(String car_brand) {
         this.car_brand = car_brand;
     }
@@ -30,6 +33,9 @@ public class CarType {
 
     public String getCar_name() {
         return car_name;
+    }
+    public String getCar_picture() {
+        return car_picture;
     }
     public String getCar_brand() {
         return car_brand;
