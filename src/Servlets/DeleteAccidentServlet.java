@@ -24,11 +24,13 @@ public class DeleteAccidentServlet extends HttpServlet {
 
         try {
             String order_number = request.getParameter("order_number");
+            String time = request.getParameter("time");
 
             Connection conn = DatabaseInit.getConnection();
-            String sql = "delete from car.accident where order_number = ?;";
+            String sql = "delete from car.accident where order_number = ? and time = ?;";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, order_number);
+            ps.setString(2, time);
             ps.executeUpdate();
         } catch (Exception e) {
             //如果出错，向网页返回错误信息

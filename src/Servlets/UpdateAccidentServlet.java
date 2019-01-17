@@ -29,12 +29,12 @@ public class UpdateAccidentServlet extends HttpServlet {
             String type = request.getParameter("type");
 
             Connection conn = DatabaseInit.getConnection();
-            String sql = "update car.accident set time= ?, place = ?, type = ? where order_number = ?;";
+            String sql = "update car.accident set place = ?, type = ? where order_number = ? and time = ?;";
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, time);
-            ps.setString(2, place);
-            ps.setString(3, type);
-            ps.setString(4, order_number);
+            ps.setString(1, place);
+            ps.setString(2, type);
+            ps.setString(3, order_number);
+            ps.setString(4, time);
             ps.executeUpdate();
         } catch (Exception e) {
             //如果出错，向网页返回错误信息

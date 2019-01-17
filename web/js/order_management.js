@@ -1,4 +1,4 @@
-$(document).ready(function(){
+﻿$(document).ready(function(){
     //初始化 Selectpicker 插件
     initSelectpicker();
     //初始化表格
@@ -44,6 +44,20 @@ function addOrder() {
     var take_oil = $('#add_take_oil').val();
     var return_oil = $('#add_return_oil').val();
     var oil_amount = $('#add_oil_amount').val();
+    if (take_time.length === 0) {
+        alert("取车时间不能为空");
+        return;
+    }
+    if (return_time.length === 0) {
+        alert("还车时间不能为空");
+        return;
+    }
+    if (take_time.length !== 0 && return_time.length !== 0) {
+        if (take_time >= return_time) {
+            alert("取车时间不能晚于还车时间");
+            return;
+        }
+    }
     var data = {
         "order_number": order_number,
         "user_phone": user_phone,
@@ -68,7 +82,7 @@ function addOrder() {
         async: false,
         success: function(data) {
             if(parseInt(data) !== 0) {
-                alert("添加失败！");
+                alert("添加失败！原因可能为:车辆编号已存在 或 车牌号已存在");
                 console.log(data);
             }
             else {
@@ -79,6 +93,8 @@ function addOrder() {
     });
     resetModal();
 }
+
+//查找订单的函数
 function searchOrder() {
     var order_number = $("#search_text").val();
     var data = {
@@ -209,69 +225,11 @@ function initTable() {
         }, {
             field: 'car_number',
             title: '汽车编号',
-            sortable: true,
-            editable: {
-                title: '选择汽车编号',
-                type: 'select',
-                source: function () {
-                    var result = [];
-                    $.ajax({
-                        type: "post",
-                        url: "carServlet",
-                        dataType: "json",
-                        //这里要设置未同步，否者之后 return 那里在 result 还没完成更改就把 result 对象给返回了
-                        async: false,
-                        success: function (json) {
-                            $.each(json, function (key, value) {
-                                if (value.car_state === "未租") {
-                                    result.push({
-                                        value: value.car_number,
-                                        text: value.car_number
-                                    });
-                                }
-                            });
-                        }
-                    });
-                    return JSON.stringify(result);
-                }
-            },
-            validate: function(v) {
-                if (!v) {
-                    return '汽车编号不能为空';
-                }
-            }
+            sortable: true
         }, {
             field: 'take_shop',
             title: '取车服务点编号',
-            sortable: true,
-            editable: {
-                title: '选择取车服务点编号',
-                type: 'select',
-                source: function () {
-                    var result = [];
-                    $.ajax({
-                        type: "post",
-                        url: "shopServlet",
-                        dataType: "json",
-                        //这里要设置未同步，否者之后 return 那里在 result 还没完成更改就把 result 对象给返回了
-                        async: false,
-                        success: function (json) {
-                            $.each(json, function (key, value) {
-                                result.push({
-                                    value: value.shop_number,
-                                    text: value.shop_number
-                                });
-                            });
-                        }
-                    });
-                    return JSON.stringify(result);
-                }
-            },
-            validate: function(v) {
-                if (!v) {
-                    return '取车服务点编号不能为空';
-                }
-            }
+            sortable: true
         }, {
             field: 'return_shop',
             title: '还车服务点编号',
@@ -329,6 +287,12 @@ function initTable() {
                 }, {
                     value: '已完成',
                     text: '已完成'
+                }, {
+                    value: '已取消',
+                    text: '已取消'
+                }, {
+                    value: '已延长',
+                    text: '已延长'
                 }]
             }
         }, {
@@ -408,6 +372,9 @@ function initTable() {
             title: '操作',
             events: operateEvents = {
                 'click #delete_button': function (e, value, row) {
+                    var msg = "您确定要删除吗？\n\n请确认！";
+                    if (confirm(msg) === false)
+                        return;
                     var data = {
                         "order_number": row.order_number
                     };
@@ -435,16 +402,6 @@ function initTable() {
             }
         }],
         onEditableSave: function(field, row) {
-            if (row.order_state === '未取车') {
-                row.return_time = null;
-            }
-            else if (row.order_state === '未还车') {
-                row.take_time = getFormatTime();
-                row.return_time = null;
-            }
-            else if (row.order_state === '已还车') {
-                row.return_time = getFormatTime();
-            }
             var data = {
                 "order_number": row.order_number,
                 "user_phone": row.user_phone,
@@ -474,8 +431,8 @@ function initTable() {
                     }
                     else {
                         alert("更改成功！");
-                        $('#order_info').bootstrapTable('refresh');
                     }
+                    $('#order_info').bootstrapTable('refresh');
                 }
             });
         }
@@ -506,45 +463,47 @@ function validateModal() {
                 validators: {
                     notEmpty: {
                         message: '订单编号不能为空'
-                    }
-                }
-            },
-            take_time: {
-                validators: {
-                    notEmpty: {
-                        message: '取车时间不能为空'
+                    },
+                    stringLength: {
+                        min: 16,
+                        max: 16,
+                        message: '订单编号必须为16位'
+                    },
+                    regexp: {
+                        regexp: /^[0-9]+$/,
+                        message: '订单编号必须为数字'
                     }
                 }
             },
             order_amount: {
                 validators: {
                     regexp: {
-                        regexp: /^[0-9]+$/,
-                        message: '订单金额必须为非负数'
+                        regexp: /^[+]?(\d+)$|^[+]{0,1}(\d+\.\d+)$/,
+                        message: '订单金额必须为正数'
                     }
                 }
             },
             take_oil: {
                 validators: {
                     regexp: {
-                        regexp: /^[0-9]+$/,
-                        message: '取车油量必须为非负数'
+                        regexp: /^[+]?(\d+)$|^[+]{0,1}(\d+\.\d+)$/,
+                        message: '取车油量必须为正数'
                     }
                 }
             },
             return_oil: {
                 validators: {
                     regexp: {
-                        regexp: /^[0-9]+$/,
-                        message: '还车油量必须为非负数'
+                        regexp: /^[+]?(\d+)$|^[+]{0,1}(\d+\.\d+)$/,
+                        message: '还车油量必须为正数'
                     }
                 }
             },
             oil_amount: {
                 validators: {
                     regexp: {
-                        regexp: /^[0-9]+$/,
-                        message: '油量花费必须为非负数'
+                        regexp: /^[+]?(\d+)$|^[+]{0,1}(\d+\.\d+)$/,
+                        message: '油量花费必须为正数'
                     }
                 }
             }

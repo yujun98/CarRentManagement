@@ -3,6 +3,8 @@ $(document).ready(function(){
     initTable();
     //初始化 validator 插件
     validateModal();
+    //显示省份
+    showProv();
     //设置搜索框的回车监听
     $('#search_text').keydown(function (e) {
         if (e.keyCode === 13) {
@@ -23,14 +25,20 @@ function addShop() {
     $('#add_modal').modal('hide');
     var shop_number = $('#add_shop_number').val();
     var shop_name = $('#add_shop_name').val();
-    var shop_city = $('#add_shop_city').val();
-    var shop_area = $('#add_shop_area').val();
+    var shop_prov = document.getElementById("add_shop_prov").options[document.getElementById("add_shop_prov").selectedIndex].innerText;
+    var shop_city = document.getElementById("add_shop_city").options[document.getElementById("add_shop_city").selectedIndex].innerText;
+    var shop_area = document.getElementById("add_shop_area").options[document.getElementById("add_shop_area").selectedIndex].innerText;
     var shop_address = $('#add_shop_address').val();
     var shop_phone = $('#add_shop_phone').val();
     var shop_hours = $('#add_shop_hours').val();
+    if (shop_area == null || shop_area.length === 0) {
+        alert("未选定城市！");
+        return;
+    }
     var data = {
         "shop_number": shop_number,
         "shop_name": shop_name,
+        "shop_prov": shop_prov,
         "shop_city": shop_city,
         "shop_area": shop_area,
         "shop_address": shop_address,
@@ -46,7 +54,7 @@ function addShop() {
         async: false,
         success: function(data) {
             if(parseInt(data) !== 0) {
-                alert("添加失败！");
+                alert("添加失败！原因可能为:服务点编号已存在");
                 console.log(data);
             }
             else {
@@ -120,28 +128,10 @@ function initTable() {
             }
         }, {
             field: 'shop_city',
-            title: '所在城市',
-            editable: {
-                title: '输入所在城市',
-                type: 'text',
-                validate: function(v) {
-                    if (!v) {
-                        return '所在城市不能为空';
-                    }
-                }
-            }
+            title: '所在城市'
         }, {
             field: 'shop_area',
-            title: '所在区域',
-            editable: {
-                title: '输入所在区域',
-                type: 'text',
-                validate: function(v) {
-                    if (!v) {
-                        return '所在区域不能为空';
-                    }
-                }
-            }
+            title: '所在区域'
         }, {
             field: 'shop_address',
             title: '详细地址',
@@ -179,8 +169,63 @@ function initTable() {
                 title: '输入营业时间',
                 type: 'text',
                 validate: function(v) {
-                    if (!v) {
+                    if (!v)
                         return '营业时间不能为空';
+                    if (v.charAt(0) === '2' && v.charAt(1) >= '5' && v.charAt(1) <= '9')
+                        return '营业时间格式不正确,营业时间至少为1小时,格式应如"9:00-18:00"';
+                    if (v.charAt(0) > '2' && v.charAt(1) >= '0' && v.charAt(1) <= '9')
+                        return '营业时间格式不正确,营业时间至少为1小时,格式应如"9:00-18:00"';
+                    var time1;
+                    if (v.charAt(1) >= '0' && v.charAt(1) <= '9')
+                        time1 = v.substring(0, 2);
+                    else
+                        time1 = v.charAt(0);
+                    for (var i = 0; i < v.length;) {
+                        if (i === 3)
+                            return '营业时间格式不正确,营业时间至少为1小时,格式应如"9:00-18:00"';
+                        if (v.charAt(i) === ':') {
+                            for (var j = i + 1; j < v.length;) {
+                                if (j === i + 4)
+                                    return '营业时间格式不正确,营业时间至少为1小时,格式应如"9:00-18:00"';
+                                if (v.charAt(j) === '-') {
+                                    if (v.charAt(j + 1) === '2' && v.charAt(j + 2) >= '5' && v.charAt(j + 2) <= '9')
+                                        return '营业时间格式不正确,营业时间至少为1小时,格式应如"9:00-18:00"';
+                                    if (v.charAt(j + 1) > '2' && v.charAt(j + 2) >= '0' && v.charAt(j + 2) <= '9')
+                                        return '营业时间格式不正确,营业时间至少为1小时,格式应如"9:00-18:00"';
+                                    var time2;
+                                    if (v.charAt(j + 2) >= '0' && v.charAt(j + 2) <= '9')
+                                        time2 = v.substring(j + 1, j + 3);
+                                    else
+                                        time2 = v.charAt(j + 1);
+                                    if ((time1 >= time2 && time1.length >= time2.length) || time1.length > time2.length)
+                                        return '营业时间格式不正确,营业时间至少为1小时,格式应如"9:00-18:00"';
+                                    for (var k = j + 1; k < v.length;) {
+                                        if (k === j + 4)
+                                            return '营业时间格式不正确,营业时间至少为1小时,格式应如"9:00-18:00"';
+                                        if (v.charAt(k) === ':') {
+                                            for (var l = k + 1; l < v.length;) {
+                                                if (l === k + 4)
+                                                    return '营业时间格式不正确,营业时间至少为1小时,格式应如"9:00-18:00"';
+                                                if (v.charAt(l) >= '0' && v.charAt(l) <= '9')
+                                                    l++;
+                                                else return '营业时间格式不正确,营业时间至少为1小时,格式应如"9:00-18:00"';
+                                                if (k + 3 === v.length)
+                                                    return;
+                                            }
+                                        }
+                                        if (v.charAt(k) >= '0' && v.charAt(k) <= '9')
+                                            k++;
+                                        else return '营业时间格式不正确,营业时间至少为1小时,格式应如"9:00-18:00"';
+                                    }
+                                }
+                                if (v.charAt(j) >= '0' && v.charAt(j) <= '9')
+                                    j++;
+                                else return '营业时间格式不正确,营业时间至少为1小时,格式应如"9:00-18:00"';
+                            }
+                        }
+                        if (v.charAt(i) >= '0' && v.charAt(i) <= '9')
+                            i++;
+                        else return '营业时间格式不正确,营业时间至少为1小时,格式应如"9:00-18:00"';
                     }
                 }
             }
@@ -189,6 +234,9 @@ function initTable() {
             title: '操作',
             events: operateEvents = {
                 'click #delete_button': function (e, value, row) {
+                    var msg = "您确定要删除吗？\n\n请确认！";
+                    if (confirm(msg) === false)
+                        return;
                     var data = {
                         "shop_number": row.shop_number
                     };
@@ -239,8 +287,8 @@ function initTable() {
                     }
                     else {
                         alert("更改成功！");
-                        $('#shop_info').bootstrapTable('refresh');
                     }
+                    $('#shop_info').bootstrapTable('refresh');
                 }
             });
         }
@@ -259,6 +307,15 @@ function validateModal() {
                 validators: {
                     notEmpty: {
                         message: '服务点编号不能为空'
+                    },
+                    regexp: {
+                        regexp: /^[a-zA-Z0-9]+$/,
+                        message: '服务点编号需为英文字母或数字'
+                    },
+                    stringLength: {
+                        min: 4,
+                        max: 4,
+                        message: '服务点编号必须为4位'
                     }
                 }
             },
@@ -269,24 +326,15 @@ function validateModal() {
                     }
                 }
             },
-            shop_city: {
-                validators: {
-                    notEmpty: {
-                        message: '所在城市不能为空'
-                    }
-                }
-            },
-            shop_area: {
-                validators: {
-                    notEmpty: {
-                        message: '所在区域不能为空'
-                    }
-                }
-            },
             shop_address: {
                 validators: {
                     notEmpty: {
                         message: '详细地址不能为空'
+                    },
+                    stringLength: {
+                        min: 0,
+                        max: 20,
+                        message: '详细地址字数不能超过20个'
                     }
                 }
             },
@@ -310,6 +358,109 @@ function validateModal() {
                 validators: {
                     notEmpty: {
                         message: '营业时间不能为空'
+                    },
+                    callback: {
+                        callback: function (value, validator, $field) {
+                            if (value.charAt(0) === '2' && value.charAt(1) >= '5' && value.charAt(1) <= '9')
+                                return {
+                                    valid: false,
+                                    message: '营业时间格式不正确,营业时间至少为1小时,格式应如"9:00-18:00"'
+                                };
+                            if (value.charAt(0) > '2' && value.charAt(1) >= '0' && value.charAt(1) <= '9')
+                                return {
+                                    valid: false,
+                                    message: '营业时间格式不正确,营业时间至少为1小时,格式应如"9:00-18:00"'
+                                };
+                            var time1;
+                            if (value.charAt(1) >= '0' && value.charAt(1) <= '9')
+                                time1 = value.substring(0, 2);
+                            else
+                                time1 = value.charAt(0);
+                            for (var i = 0; i < value.length;) {
+                                if (i === 3)
+                                    return {
+                                        valid: false,
+                                        message: '营业时间格式不正确,营业时间至少为1小时,格式应如"9:00-18:00"'
+                                    };
+                                if (value.charAt(i) === ':') {
+                                    for (var j = i + 1; j < value.length;) {
+                                        if (j === i + 4)
+                                            return {
+                                                valid: false,
+                                                message: '营业时间格式不正确,营业时间至少为1小时,格式应如"9:00-18:00"'
+                                            };
+                                        if (value.charAt(j) === '-') {
+                                            if (value.charAt(j + 1) === '2' && value.charAt(j + 2) >= '5' && value.charAt(j + 2) <= '9')
+                                                return {
+                                                    valid: false,
+                                                    message: '营业时间格式不正确,营业时间至少为1小时,格式应如"9:00-18:00"'
+                                                };
+                                            if (value.charAt(j + 1) > '2' && value.charAt(j + 2) >= '0' && value.charAt(j + 2) <= '9')
+                                                return {
+                                                    valid: false,
+                                                    message: '营业时间格式不正确,营业时间至少为1小时,格式应如"9:00-18:00"'
+                                                };
+                                            var time2;
+                                            if (value.charAt(j + 2) >= '0' && value.charAt(j + 2) <= '9')
+                                                time2 = value.substring(j + 1, j + 3);
+                                            else
+                                                time2 = value.charAt(j + 1);
+                                            if ((time1 >= time2 && time1.length >= time2.length) || time1.length > time2.length)
+                                                return {
+                                                    valid: false,
+                                                    message: '营业时间格式不正确,营业时间至少为1小时,格式应如"9:00-18:00"'
+                                                };
+                                            for (var k = j + 1; k < value.length;) {
+                                                if (k === j + 4)
+                                                    return {
+                                                        valid: false,
+                                                        message: '营业时间格式不正确,营业时间至少为1小时,格式应如"9:00-18:00"'
+                                                    };
+                                                if (value.charAt(k) === ':') {
+                                                    for (var l = k + 1; l < value.length;) {
+                                                        if (l === k + 4)
+                                                            return {
+                                                                valid: false,
+                                                                message: '营业时间格式不正确,营业时间至少为1小时,格式应如"9:00-18:00"'
+                                                            };
+                                                        if (value.charAt(l) >= '0' && value.charAt(l) <= '9')
+                                                            l++;
+                                                        else
+                                                            return {
+                                                                valid: false,
+                                                                message: '营业时间格式不正确,营业时间至少为1小时,格式应如"9:00-18:00"'
+                                                            };
+                                                        if (k + 3 === value.length)
+                                                            return true;
+                                                    }
+                                                }
+                                                if (value.charAt(k) >= '0' && value.charAt(k) <= '9')
+                                                    k++;
+                                                else
+                                                    return {
+                                                        valid: false,
+                                                        message: '营业时间格式不正确,营业时间至少为1小时,格式应如"9:00-18:00"'
+                                                    };
+                                            }
+                                        }
+                                        if (value.charAt(j) >= '0' && value.charAt(j) <= '9')
+                                            j++;
+                                        else
+                                            return {
+                                                valid: false,
+                                                message: '营业时间格式不正确,营业时间至少为1小时,格式应如"9:00-18:00"'
+                                            };
+                                    }
+                                }
+                                if (value.charAt(i) >= '0' && value.charAt(i) <= '9')
+                                    i++;
+                                else
+                                    return {
+                                        valid: false,
+                                        message: '营业时间格式不正确,营业时间至少为1小时,格式应如"9:00-18:00"'
+                                    };
+                            }
+                        }
                     }
                 }
             }
@@ -323,4 +474,61 @@ function resetModal() {
     $('#add_shop_form').data('bootstrapValidator').destroy();
     $('#add_shop_form').data('bootstrapValidator', null);
     validateModal();
+}
+
+var prov = document.getElementById('add_shop_prov');
+var city = document.getElementById('add_shop_city');
+var country = document.getElementById('add_shop_area');
+
+/*用于保存当前所选的省市区*/
+var current = {
+    prov: '',
+    city: '',
+    country: ''
+};
+
+/*自动加载省份列表*/
+function showProv() {
+    var len = provice.length;
+    for (var i = 0; i < len; i++) {
+        var provOpt = document.createElement('option');
+        provOpt.innerText = provice[i]['name'];
+        provOpt.value = i;
+        prov.appendChild(provOpt);
+    }
+}
+
+/*根据所选的省份来显示城市列表*/
+function showCity(obj) {
+    var val = obj.options[obj.selectedIndex].value;
+    if (val !== current.prov) {
+        current.prov = val;
+    }
+    //console.log(val);
+    if (val != null) {
+        city.length = 1;
+        var cityLen = provice[val]["city"].length;
+        for (var j = 0; j < cityLen; j++) {
+            var cityOpt = document.createElement('option');
+            cityOpt.innerText = provice[val]["city"][j].name;
+            cityOpt.value = j;
+            city.appendChild(cityOpt);
+        }
+    }
+}
+
+/*根据所选的城市来显示县区列表*/
+function showCountry(obj) {
+    var val = obj.options[obj.selectedIndex].value;
+    current.city = val;
+    if (val != null) {
+        country.length = 1; //清空之前的内容只留第一个默认选项
+        var countryLen = provice[current.prov]["city"][val].districtAndCounty.length;
+        for (var n = 0; n < countryLen; n++) {
+            var countryOpt = document.createElement('option');
+            countryOpt.innerText = provice[current.prov]["city"][val].districtAndCounty[n];
+            countryOpt.value = n;
+            country.appendChild(countryOpt);
+        }
+    }
 }

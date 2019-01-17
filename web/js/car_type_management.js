@@ -74,7 +74,7 @@ function searchCarType() {
         data: data,
         dataType: "json",
         success: function(json){
-            $('#car_info').bootstrapTable('load', json);
+            $('#car_type_info').bootstrapTable('load', json);
         }
     });
     $('#search_text').val('');
@@ -187,6 +187,9 @@ function initTable() {
             title: '操作',
             events: operateEvents = {
                 'click #delete_button': function (e, value, row) {
+                    var msg = "您确定要删除吗？\n\n请确认！";
+                    if (confirm(msg) === false)
+                        return;
                     var data = {
                         "car_name": row.car_name
                     };
@@ -236,8 +239,8 @@ function initTable() {
                     }
                     else {
                         alert("更改成功！");
-                        $('#car_type_info').bootstrapTable('refresh');
                     }
+                    $('#car_type_info').bootstrapTable('refresh');
                 }
             });
         }
@@ -272,8 +275,8 @@ function validateModal() {
                         message: '日租金不能为空'
                     },
                     regexp: {
-                        regexp: /^[0-9]+$/,
-                        message: '日租金必须为非负数'
+                        regexp: /^[+]?(\d+)$|^[+]{0,1}(\d+\.\d+)$/,
+                        message: '日租金必须为正数'
                     }
                 }
             },
@@ -283,8 +286,8 @@ function validateModal() {
                         message: '所需押金不能为空'
                     },
                     regexp: {
-                        regexp: /^[0-9]+$/,
-                        message: '所需押金必须为非负数'
+                        regexp: /^[+]?(\d+)$|^[+]{0,1}(\d+\.\d+)$/,
+                        message: '所需押金必须为正数'
                     }
                 }
             },

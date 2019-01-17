@@ -133,14 +133,14 @@ function initTable() {
             }
         }, {
             field: 'type',
-            title: '违约类型',
+            title: '违约说明',
             type: 'text',
             editable: {
-                title: '输入违约类型',
+                title: '输入违约说明',
                 type: 'text',
                 validate: function(v) {
                     if (!v) {
-                        return '违约类型不能为空';
+                        return '违约说明不能为空';
                     }
                 }
             }
@@ -149,6 +149,9 @@ function initTable() {
             title: '操作',
             events: operateEvents = {
                 'click #delete_button': function (e, value, row) {
+                    var msg = "您确定要删除吗？\n\n请确认！";
+                    if (confirm(msg) === false)
+                        return;
                     var data = {
                         "order_number": row.order_number
                     };
@@ -195,8 +198,8 @@ function initTable() {
                     }
                     else {
                         alert("更改成功！");
-                        $('#bac_info').bootstrapTable('refresh');
                     }
+                    $('#bac_info').bootstrapTable('refresh');
                 }
             });
         }
@@ -217,15 +220,20 @@ function validateModal() {
                         message: '罚款金额不能为空'
                     },
                     regexp: {
-                        regexp: /^[0-9]+$/,
-                        message: '罚款金额必须为非负数'
+                        regexp: /^[+]?(\d+)$|^[+]{0,1}(\d+\.\d+)$/,
+                        message: '罚款金额必须为正数'
                     }
                 }
             },
             type: {
                 validators: {
                     notEmpty: {
-                        message: '违约类型不能为空'
+                        message: '违约说明不能为空'
+                    },
+                    stringLength: {
+                        min: 0,
+                        max: 100,
+                        message: '违约说明字数不能超过100个'
                     }
                 }
             }

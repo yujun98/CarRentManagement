@@ -58,11 +58,11 @@ public class OrderServlet extends HttpServlet {
             o.setReturn_shop(rs.getString("return_shop"));
             o.setTake_time(rs.getString("take_time"));
             o.setReturn_time(rs.getString("return_time"));
-            o.setOrder_amount(rs.getInt("order_amount"));
+            o.setOrder_amount(rs.getFloat("order_amount"));
             o.setOrder_state(rs.getString("order_state"));
-            o.setTake_oil(rs.getInt("take_oil"));
-            o.setReturn_oil(rs.getInt("return_oil"));
-            o.setOil_amount(rs.getInt("oil_amount"));
+            o.setTake_oil(rs.getFloat("take_oil"));
+            o.setReturn_oil(rs.getFloat("return_oil"));
+            o.setOil_amount(rs.getFloat("oil_amount"));
             o.setOrder_time(rs.getString("order_time"));
             list.add(o);
         }

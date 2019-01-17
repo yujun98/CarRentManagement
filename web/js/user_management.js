@@ -106,14 +106,14 @@ function initTable() {
             sortable: true
         }, {
             field: 'user_name',
-            title: '用户昵称',
+            title: '用户姓名',
             type: 'text',
             editable: {
-                title: '输入用户昵称',
+                title: '输入用户姓名',
                 type: 'text',
                 validate: function(v) {
                     if (!v) {
-                        return '用户昵称不能为空';
+                        return '用户姓名不能为空';
                     }
                 }
             }
@@ -140,8 +140,26 @@ function initTable() {
                     if (!v) {
                         return '用户密码不能为空';
                     }
-                    else if (v.length < 10 && v.length > 18) {
-                        return '用户密码需在10位与18位之间';
+                    else if (v.length < 6 && v.length > 10) {
+                        return '用户密码需在6位与10位之间';
+                    }
+                    else {
+                        var tmp = 0;
+                        for (var i = 0; i < v.length; i++) {
+                            if ((v.charAt(i) >= 'a' && v.charAt(i) <= 'z') || (v.charAt(i) >= 'A' && v.charAt(i) <= 'Z')) {
+                                tmp ++;
+                                break;
+                            }
+                        }
+                        for (var i = 0; i < v.length; i++) {
+                            if ((v.charAt(i) >= '0' && v.charAt(i) <= '9')) {
+                                tmp ++;
+                                break;
+                            }
+                        }
+                        if (tmp !== 2) {
+                            return '用户密码必须至少有一个字母，一个数字';
+                        }
                     }
                 }
             }
@@ -192,6 +210,9 @@ function initTable() {
             title: '操作',
             events: operateEvents = {
                 'click #delete_button': function (e, value, row) {
+                    var msg = "您确定要删除吗？\n\n请确认！";
+                    if (confirm(msg) === false)
+                        return;
                     var data = {
                         "user_phone": row.user_phone
                     };
@@ -242,8 +263,8 @@ function initTable() {
                     }
                     else {
                         alert("更改成功！");
-                        $('#user_info').bootstrapTable('refresh');
                     }
+                    $('#user_info').bootstrapTable('refresh');
                 }
             });
         }
@@ -277,7 +298,7 @@ function validateModal() {
             user_name: {
                 validators: {
                     notEmpty: {
-                        message: '用户昵称不能为空'
+                        message: '用户姓名不能为空'
                     }
                 }
             },
@@ -299,10 +320,9 @@ function validateModal() {
                     notEmpty: {
                         message: '用户密码不能为空'
                     },
-                    stringLength: {
-                        min: 6,
-                        max: 18,
-                        message: '用户密码必须在6至18位之间'
+                    regexp: {
+                        regexp: /^(?=.*[a-zA-Z])(?=.*[0-9])[A-Za-z0-9]{6,10}$/,
+                        message: '用户密码必须至少有一个字母，一个数字，且位数在6至10位之间'
                     }
                 }
             },
@@ -312,8 +332,8 @@ function validateModal() {
                         message: '押金不能为空'
                     },
                     regexp: {
-                        regexp: /^[0-9]+$/,
-                        message: '押金必须为非负数'
+                        regexp: /^[+]?(\d+)$|^[+]{0,1}(\d+\.\d+)$/,
+                        message: '押金必须为正数'
                     }
                 }
             },
@@ -321,6 +341,10 @@ function validateModal() {
                 validators: {
                     notEmpty: {
                         message: '余额不能为空'
+                    },
+                    regexp: {
+                        regexp: /^[+]?(\d+)$|^[+]{0,1}(\d+\.\d+)$/,
+                        message: '余额必须为正数'
                     }
                 }
             },
@@ -328,6 +352,10 @@ function validateModal() {
                 validators: {
                     notEmpty: {
                         message: '积分不能为空'
+                    },
+                    regexp: {
+                        regexp: /^[+]?(\d+)$|^[+]{0,1}(\d+\.\d+)$/,
+                        message: '积分必须为正数'
                     }
                 }
             }

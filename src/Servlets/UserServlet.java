@@ -55,9 +55,9 @@ public class UserServlet extends HttpServlet {
             u.setUser_name(rs.getString("user_name"));
             u.setUser_pwd(rs.getString("user_pwd"));
             u.setId(rs.getString("id"));
-            u.setBalance(rs.getInt("balance"));
-            u.setDeposit(rs.getInt("deposit"));
-            u.setScore(rs.getInt("score"));
+            u.setBalance(rs.getFloat("balance"));
+            u.setDeposit(rs.getFloat("deposit"));
+            u.setScore(rs.getFloat("score"));
             list.add(u);
         }
     }

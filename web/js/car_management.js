@@ -44,7 +44,7 @@ function addCar() {
         async: false,
         success: function(data) {
             if(parseInt(data) !== 0) {
-                alert("添加失败！");
+                alert("添加失败！原因可能为:车辆编号已存在或车牌号已存在");
                 console.log(data);
             }
             else {
@@ -138,16 +138,7 @@ function initTable() {
             field: 'plate_number',
             title: '车辆车牌号',
             type: 'text',
-            sortable: true,
-            editable: {
-                title: '输入车辆车牌号',
-                type: 'text',
-                validate: function(v) {
-                    if (!v) {
-                        return '车辆车牌号不能为空';
-                    }
-                }
-            }
+            sortable: true
         }, {
             field: 'car_name',
             title: '车辆名称',
@@ -224,6 +215,9 @@ function initTable() {
             title: '操作',
             events: operateEvents = {
                 'click #delete_button': function (e, value, row) {
+                    var msg = "您确定要删除吗？\n\n请确认！";
+                    if (confirm(msg) === false)
+                        return;
                     var data = {
                         "car_number": row.car_number
                     };
@@ -272,8 +266,8 @@ function initTable() {
                     }
                     else {
                         alert("更改成功！");
-                        $('#car_info').bootstrapTable('refresh');
                     }
+                    $('#car_info').bootstrapTable('refresh');
                 }
             });
         }
@@ -291,14 +285,28 @@ function validateModal() {
             car_number: {
                 validators: {
                     notEmpty: {
-                        message: '汽车编号不能为空'
+                        message: '车辆编号不能为空'
+                    },
+                    regexp: {
+                        regexp: /^[a-zA-Z0-9]+$/,
+                        message: '车辆编号需为英文字母或数字'
+                    },
+                    stringLength: {
+                        min: 5,
+                        max: 5,
+                        message: '车辆编号必须为5位'
                     }
                 }
             },
             plate_number: {
                 validators: {
                     notEmpty: {
-                        message: '汽车车牌号不能为空'
+                        message: '车辆车牌号不能为空'
+                    },
+                    stringLength: {
+                        min: 7,
+                        max: 7,
+                        message: '车辆车牌号必须为7位'
                     }
                 }
             }

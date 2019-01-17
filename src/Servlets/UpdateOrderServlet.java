@@ -37,6 +37,12 @@ public class UpdateOrderServlet extends HttpServlet {
             float oil_amount = Float.parseFloat(request.getParameter("oil_amount"));
             String order_time = request.getParameter("order_time");
 
+            if (return_shop.length() == 0) {
+                return_shop = null;
+                if (order_state.equals("已还车") || order_state.equals("已完成")) {
+                    order_state = null;
+                }
+            }
             if (return_time.length() == 0) {
                 return_time = null;
             }

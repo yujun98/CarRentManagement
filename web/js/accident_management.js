@@ -11,6 +11,14 @@ $(document).ready(function(){
             $('#search_btn').click();
         }
     });
+    //初始化 datetimepicker 插件
+    $('.datetimepicker').datetimepicker({
+        autoclose: true,
+        clearBtn: true,
+        language: 'zh-CN',
+        orientation: 'bottom',
+        todayHighlight: true
+    })
 });
 
 //添加事故记录
@@ -78,6 +86,7 @@ function initSelectpicker() {
         type: "post",
         url: "orderServlet",
         dataType: "json",
+        async: false,
         success: function (json) {
             var html = '';
             $.each(json, function (key, value) {
@@ -120,15 +129,7 @@ function initTable() {
         }, {
             field: 'time',
             title: '事故时间',
-            editable: {
-                title: '输入事故时间',
-                type: 'text',
-                validate: function(v) {
-                    if (!v) {
-                        return '事故时间不能为空';
-                    }
-                }
-            }
+            sortable: true
         }, {
             field: 'place',
             title: '事故地点',
@@ -143,14 +144,14 @@ function initTable() {
             }
         },{
             field: 'type',
-            title: '事故类型',
+            title: '事故说明',
             type: 'text',
             editable: {
-                title: '输入事故类型',
+                title: '输入事故说明',
                 type: 'text',
                 validate: function(v) {
                     if (!v) {
-                        return '事故类型不能为空';
+                        return '事故说明不能为空';
                     }
                 }
             }
@@ -159,8 +160,12 @@ function initTable() {
             title: '操作',
             events: operateEvents = {
                 'click #delete_button': function (e, value, row) {
+                    var msg = "您确定要删除吗？\n\n请确认！";
+                    if (confirm(msg) === false)
+                        return;
                     var data = {
-                        "order_number": row.order_number
+                        "order_number": row.order_number,
+                        "time": row.time
                     };
                     //通过 data 变量以 JSON 的形式向后台传递信息，后台再以 text 的形式放回，再通过判断返回的值判断是否操作成功
                     $.ajax({
@@ -206,8 +211,8 @@ function initTable() {
                     }
                     else {
                         alert("更改成功！");
-                        $('#accident_info').bootstrapTable('refresh');
                     }
+                    $('#accident_info').bootstrapTable('refresh');
                 }
             });
         }
@@ -222,24 +227,22 @@ function validateModal() {
             validating: 'glyphicon glyphicon-refresh'
         },
         fields: {
-            time: {
-                validators: {
-                    notEmpty: {
-                        message: '违约时间不能为空'
-                    }
-                }
-            },
             place: {
                 validators: {
                     notEmpty: {
-                        message: '违约地点不能为空'
+                        message: '事故地点不能为空'
                     }
                 }
             },
             type: {
                 validators: {
                     notEmpty: {
-                        message: '违约类型不能为空'
+                        message: '事故说明不能为空'
+                    },
+                    stringLength: {
+                        min: 0,
+                        max: 100,
+                        message: '事故说明字数不能超过100个'
                     }
                 }
             }
